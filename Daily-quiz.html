@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Medical Quiz - [Your Name]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height:100vh; padding:20px; }
+        .container { max-width:500px; margin:0 auto; background:white; border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.1); overflow:hidden; }
+        h1 { background:#4f46e5; color:white; padding:25px; text-align:center; font-size:24px; }
+        .progress { background:#f3f4f6; padding:20px; text-align:center; }
+        .bar { height:12px; background:#e5e7eb; border-radius:6px; overflow:hidden; margin:10px 0; }
+        .fill { height:100%; background:linear-gradient(90deg, #10b981, #059669); transition:width 0.5s; border-radius:6px; }
+        .stats { display:flex; justify-content:space-around; font-size:18px; font-weight:bold; margin:15px 0; }
+        .question { padding:30px 25px; font-size:20px; line-height:1.5; text-align:center; min-height:200px; display:flex; align-items:center; justify-content:center; }
+        .answers { padding:0 25px 30px; }
+        button { width:100%; height:70px; margin:12px 0; border:none; border-radius:15px; font-size:18px; font-weight:500; cursor:pointer; transition:all 0.2s; }
+        .option { background:#f8fafc; color:#374151; }
+        .option:hover { background:#e0e7ff; transform:translateY(-2px); }
+        .option.correct { background:#d1fae5; color:#065f46; }
+        .option.wrong { background:#fee2e2; color:#991b1b; }
+        .submit { background:#3b82f6; color:white; font-size:22px; height:80px; }
+        .submit:hover { background:#2563eb; transform:scale(1.02); }
+        .feedback { padding:25px; text-align:center; font-size:22px; }
+        .correct { color:#059669; }
+        .wrong { color:#dc2626; }
+        .score { font-size:28px; font-weight:bold; }
+        .streak { color:#eab308; }
+        .next-day { background:rgba(0,0,0,0.8); color:white; padding:40px; text-align:center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Daily Medical Quiz</h1>
+        <div class="progress">
+            <div class="stats">
+                <div>Day <span id="day">1</span></div>
+                <div id="streak">Streak: 0</div>
+            </div>
+            <div class="bar"><div class="fill" id="progress" style="width:0%"></div></div>
+            <div id="score-today">Score: 0/0</div>
+        </div>
+        
+        <div id="quiz-container">
+            <div class="question" id="question"></div>
+            <div class="answers" id="answers"></div>
+            <button class="submit" id="submit" style="display:none">Submit Answer</button>
+        </div>
+        
+        <div id="feedback" class="feedback" style="display:none">
+            <div id="feedback-text"></div>
+            <button class="submit" id="next" style="margin-top:20px">Next Question</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {q: "10-month-old boy poorly gaining weight, persistent cough, thick sputum, pneumonia 3x, sweat chloride >80 mEq/L?", 
+             a: ["Mucoviscidosis (cystic fibrosis)", "Bronchial asthma", "Congenital lung abnormality", "Foreign body in bronchi", "Chronic bronchitis"], 
+             c: 0},
+            {q: "42yo man, 20yr duodenal ulcer, heaviness after eating, rotten eructation, vomiting old food, weight loss, sloshing sound?", 
+             a: ["Ulcer penetration", "Chronic pancreatitis", "Ulcerative stenosis of pylorus", "Covered perforation", "Stomach cancer"], 
+             c: 2},
+            {q: "22yo pregnant, edema, headache, nausea, BP 160/130, twitching, eclampsia seizures?", a: ["Hypertensive crisis", "Diabetic coma", "Chorea", "Eclampsia", "Epilepsy"], c: 3},
+            {q: "45yo skin rash on trunk/limbs after stress, papules w/ silvery scales, stearin spot?", a: ["Dermatophytosis", "Eczema", "Lichen ruber planus", "Allergic dermatitis", "Psoriasis"], c: 4},
+            {q: "23yo swallowed brake fluid, anuria 5 days, creatinine 0.569 mmol/L?", a: ["Diuretics", "Antidotal therapy", "Hemodialysis", "Plasmapheresis", "Detoxication"], c: 2},
+            {q: "19yo woman no menses post-pathological birth, narrow vagina, small uterus, no ovaries palpable, hypoestrogenemia?", a: ["Stein-Leventhal", "Hypothyroidism", "Astheno-vegetative", "Genital TB", "Sheehan syndrome"], c: 4},
+            {q: "64yo sigmoid tumor + chronic thrombophlebitis pre-op, prevent DVT?", a: ["Phenylinum", "LMW heparin", "Regular heparin", "Aspirin", "Rheopolyglucin"], c: 1},
+            {q: "40yo smoker cough mornings mucopurulent sputum 37.6C, coarse respirations, leuk 12e9, ESR 19, purulent endobronchitis?", a: ["Lung cancer", "Bronchial asthma", "CAP", "Pulmonary TB", "Chronic bronchitis"], c: 4},
+            // Add more from PDF as needed...
+        ];
+
+        let currentDay = Math.floor(Date.now() / 86400000);
+        let dailyQuiz = [];
+        let currentQ = 0;
+        let score = 0;
+        let answers = [];
+
+        function init() {
+            let stats = JSON.parse(localStorage.getItem('quizStats') || '{}');
+            document.getElementById('day').textContent = stats.days || 1;
+            document.getElementById('streak').textContent = `Streak: ${stats.streak || 0} days`;
+            
+            generateDailyQuiz();
+            showQuestion();
+        }
+
+        function generateDailyQuiz() {
+            let daySeed = currentDay;
+            let dailyQs = [];
+            for(let i=0; i<5; i++) {
+                let idx = (daySeed + i*7) % questions.length;
+                dailyQs.push({...questions[idx], id: i});
+            }
+            dailyQuiz = dailyQs;
+            document.getElementById('score-today').textContent = `Score: 0/5`;
+        }
+
+        function showQuestion() {
+            let q = dailyQuiz[currentQ];
+            document.getElementById('question').textContent = q.q;
+            let answersEl = document.getElementById('answers');
+            answersEl.innerHTML = '';
+            
+            q.a.forEach((opt, i) => {
+                let btn = document.createElement('button');
+                btn.className = 'option';
+                btn.textContent = `${String.fromCharCode(65+i)}. ${opt}`;
+                btn.onclick = () => selectAnswer(i);
+                answersEl.appendChild(btn);
+            });
+            
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('feedback').style.display = 'none';
+            updateProgress();
+        }
+
+        function selectAnswer(selected) {
+            let q = dailyQuiz[currentQ];
+            answers[currentQ] = selected;
+            document.querySelectorAll('.option').forEach((btn, i) => {
+                btn.disabled = true;
+                if(i === q.c) btn.classList.add('correct');
+                if(i === selected && i !== q.c) btn.classList.add('wrong');
+            });
+            document.getElementById('submit').style.display = 'block';
+        }
+
+        function submitAnswer() {
+            let q = dailyQuiz[currentQ];
+            let selected = answers[currentQ];
+            if(selected === q.c) score++;
+            
+            document.getElementById('quiz-container').style.display = 'none';
+            let fb = document.getElementById('feedback');
+            fb.style.display = 'block';
+            
+            if(selected === q.c) {
+                document.getElementById('feedback-text').innerHTML = '<span class="correct">✅ Correct!</span>';
+            } else {
+                document.getElementById('feedback-text').innerHTML = 
+                    `<span class="wrong">❌ Wrong</span><br><strong>Correct: ${q.a[q.c]}</strong>`;
+            }
+            
+            document.getElementById('score-today').textContent = `Score: ${score}/${dailyQuiz.length}`;
+            updateProgress();
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if(currentQ < dailyQuiz.length) {
+                showQuestion();
+            } else {
+                saveStats();
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            let pct = (currentQ / dailyQuiz.length) * 100;
+            document.getElementById('progress').style.width = pct + '%';
+        }
+
+        function showResults() {
+            let pct = Math.round((score / dailyQuiz.length) * 100);
+            document.getElementById('feedback-text').innerHTML = `
+                <div class="score">${score}/5 (${pct}%)</div>
+                <div>Great job! Review tomorrow.</div>
+            `;
+            document.getElementById('next').textContent = 'Review All Answers';
+            document.getElementById('next').onclick = showAllAnswers;
+        }
+
+        function showAllAnswers() {
+            let html = '<h3>All Answers:</h3>';
+            dailyQuiz.forEach((q, i) => {
+                let user = answers[i] === q.c ? '✅ Correct' : `❌ Wrong (picked ${String.fromCharCode(65+answers[i])})`;
+                html += `<p><strong>Q${i+1}:</strong> ${user}<br>${q.a[q.c]}</p>`;
+            });
+            document.getElementById('feedback-text').innerHTML = html;
+            document.getElementById('next').textContent = 'New Day';
+            document.getElementById('next').onclick = init;
+        }
+
+        function saveStats() {
+            let stats = JSON.parse(localStorage.getItem('quizStats') || '{}');
+            stats.days = currentDay + 1;
+            stats.streak = score === 5 ? (stats.streak || 0) + 1 : 0;
+            stats.avg = ((stats.avg * (stats.count || 0) + score/5) / (stats.count + 1)).toFixed(2);
+            stats.count++;
+            localStorage.setItem('quizStats', JSON.stringify(stats));
+        }
+
+        document.getElementById('submit').onclick = submitAnswer;
+        document.getElementById('next').onclick = nextQuestion;
+        
+        init();
+    </script>
+</body>
+</html>
