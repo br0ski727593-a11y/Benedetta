@@ -72,7 +72,7 @@
 </div>
 
 <script>
-const allQuestions = const fullQuestionPool = [
+const fullQuestionPool = [
     {
         q: "A 10-month-old boy is poorly gaining weight. His mother complains about his constant persistent cough. Sputum is thick and viscous. The boy had pneumonia three times. His sweat chloride levels are over 80 mEq/L. What is the most likely diagnosis?",
         o: ["Mucoviscidosis (cystic fibrosis)", "Bronchial asthma", "Congenital lung abnormality", "A foreign body in the bronchi", "Chronic bronchitis"],
