@@ -72,49 +72,345 @@
 </div>
 
 <script>
-const allQuestions = [
-  {q:"10‑month‑old boy poorly gaining weight, persistent cough, thick sputum, 3x pneumonia, sweat chloride >80 mEq/L. Diagnosis?",
-   o:["Mucoviscidosis (cystic fibrosis)","Bronchial asthma","Congenital lung abnormality","Foreign body in bronchi","Chronic bronchitis"],c:0},
-  {q:"42‑year‑old man, 20‑year duodenal ulcer, heaviness after eating, rotten eructation, vomiting of yesterday’s food, weight loss. Complication?",
-   o:["Ulcer penetration","Chronic pancreatitis","Ulcerative stenosis of pylorus","Covered perforation","Stomach cancer"],c:2},
-  {q:"22‑year‑old pregnant woman, edema, headache, nausea, BP 160/130, tonic‑clonic seizures with cyanosis. Diagnosis?",
-   o:["Hypertensive crisis","Diabetic coma","Chorea","Eclampsia","Epilepsy"],c:3},
-  {q:"45‑year‑old with papular rash and silvery scales, stearin spot sign. Diagnosis?",
-   o:["Dermatophytosis","Eczema","Lichen planus","Allergic dermatitis","Psoriasis"],c:4},
-  {q:"23‑year‑old swallowed brake fluid, anuria 5 days, creatinine 0.569 mmol/L. Best treatment?",
-   o:["Diuretics","Antidotal therapy","Hemodialysis","Plasmapheresis","Detoxication"],c:2},
-  {q:"19‑year‑old woman after massive postpartum hemorrhage, amenorrhea, weight loss, no lactation. Diagnosis?",
-   o:["Stein‑Leventhal syndrome","Hypothyroidism","Astheno‑vegetative syndrome","Genital tuberculosis","Sheehan syndrome"],c:4},
-  {q:"64‑year‑old with sigmoid cancer and chronic DVT, pre‑op prophylaxis of DVT?",
-   o:["Phenindione","Low‑molecular‑weight heparin","Regular heparin","Aspirin","Rheopolyglucin"],c:1},
-  {q:"40‑year‑old smoker, chronic morning cough with mucopurulent sputum, mild temp, purulent endobronchitis. Diagnosis?",
-   o:["Lung cancer","Bronchial asthma","Community‑acquired pneumonia","Pulmonary TB","Chronic bronchitis"],c:4},
-  {q:"5‑day‑old newborn, physiologic status good, indirect bilirubin 140 µmol/L, direct 0. Diagnosis?",
-   o:["Hemolytic anemia","Congenital hepatitis","Biliary atresia","Hemolytic disease of newborn","Physiologic jaundice"],c:4},
-  {q:"57‑year‑old miner, heavy smoker, X‑ray triangular shadow in right middle lobe pointing to hilum. Diagnosis?",
-   o:["Pneumoconiosis","TB of right lung","Cancer of right lung","Chronic bronchitis","Right‑sided pneumonia"],c:2},
-  {q:"25‑year‑old, hematuria after chilling, BP 160/110, proteinuria 3.5 g/L, RBCs plentiful. Most informative test?",
-   o:["Excretory urography","Renal US","Cystoscopy","Tomography","Kidney biopsy"],c:4},
-  {q:"37‑year‑old woman lost vision at work, needs retraining. Type of rehabilitation?",
-   o:["Occupational","Social","Psychological","Medical","Target"],c:0},
-  {q:"44‑year‑old drinker, 6‑day binge, insomnia, visual hallucinations, autonomic signs. Diagnosis?",
-   o:["Somatogenic psychosis","Delirium tremens","Obsessive‑phobic neurosis","Occupational delirium","Alcoholic hallucinosis"],c:1},
-  {q:"50‑year‑old with earth‑gray skin, icteric sclera, methemoglobin 62% after paint‑factory exposure. Diagnosis?",
-   o:["Chronic cyanide poisoning","Acute aniline poisoning","Acute toluene poisoning","Acquired hemolytic anemia","Acute viral hepatitis"],c:1},
-  {q:"18‑year‑old ate salad with smoked fish, 6 h later: weakness, diplopia, dysphagia, mydriasis, afebrile. Diagnosis?",
-   o:["Botulism","Mushroom poisoning","Salmonellosis","Fish histamine poisoning","Staph intoxication"],c:0},
-  {q:"8‑year‑old 1 year after hepatitis B, now fatigue, poor appetite, ALT 220 U/L. Interpretation?",
-   o:["Recurrence hepatitis B","Biliary dyskinesia","Cirrhosis","Development of chronic hepatitis","Residual effects"],c:3},
-  {q:"45‑year‑old with duodenal ulcer, pale, Hb 88 g/L, microcytosis, positive occult blood. Treatment?",
-   o:["Steroids + cytostatics","Vit C + CaCl2","IM B12","Iron therapy + diet","Packed RBC transfusion"],c:3},
-  {q:"Polycystic kidney disease, diuresis 2–2.5 L/day, GFR 34 mL/min. Stage of CKD?",
-   o:["Polyuric","Intermittent","Latent","Terminal","Compensated"],c:4},
-  {q:"27‑year‑old woman, lumpy stools with mucus, pain relieved by defecation, colonoscopy normal. Diagnosis?",
-   o:["Crohn disease","Irritable bowel syndrome","Whipple disease","Chronic non‑ulcer colitis","Chronic enteritis"],c:1},
-  {q:"46‑year‑old woman woken at 3 a.m. by RUQ pain to shoulder, 39 °C, guarding. Diagnosis?",
-   o:["Cholelithiasis","CBD stricture","Unstable angina","Peptic ulcer disease","Acute cholecystitis"],c:4},
-  // you can append more questions from the PDF here later
-];
+const allQuestions = const fullQuestionPool = [
+    {
+        q: "A 10-month-old boy is poorly gaining weight. His mother complains about his constant persistent cough. Sputum is thick and viscous. The boy had pneumonia three times. His sweat chloride levels are over 80 mEq/L. What is the most likely diagnosis?",
+        o: ["Mucoviscidosis (cystic fibrosis)", "Bronchial asthma", "Congenital lung abnormality", "A foreign body in the bronchi", "Chronic bronchitis"],
+        a: 0
+    },
+    {
+        q: "A 42-year-old man, who has been suffering from a duodenal ulcer for 20 years, has developed a constant feeling of heaviness in his stomach after eating. His eructation carries the smell of decay and vomiting occurs with the food eaten the day before. He has lost weight. Objectively, his condition is relatively satisfactory, tissue turgor is reduced. The abdomen is soft on palpation, there are no signs of peritoneal irritation, and a 'sloshing sound' can be heard in the epigastrium. Defecation occurs once every 3 days. What complication most likely corresponds with the patient's condition?",
+        o: ["Ulcer penetration", "Chronic pancreatitis", "Ulcerative stenosis of the pylorus", "Covered perforation of an ulcer", "Stomach cancer"],
+        a: 2
+    },
+    {
+        q: "A 22-year-old pregnant woman was hospitalized in a severe condition. Throughout the past three days, she developed edemas, headache, nausea, and one episode of vomiting. Objectively, her consciousness is clouded, her blood pressure is 160/130 mm Hg. She presents with small fibrillar twitching of the facial muscles and problems with nasal breathing. During transportation, the woman's arms started twitching, her body stretched out, her spine curved, her jaws tightly clenched, and she stopped breathing. Then she developed clonic seizures and marked cyanosis. After that, the seizures stopped, a deep noisy inhale occurred, and blood-stained foam appeared on the patient's lips. What is the most likely diagnosis?",
+        o: ["Hypertensive crisis", "Diabetic coma", "Chorea", "Eclampsia", "Epilepsy"],
+        a: 3
+    },
+    {
+        q: "A 45-year-old patient complains of a skin rash on the trunk and upper and lower limbs. The patient associates the development of this rash with a recently experienced stressful situation. Objectively, there are inflammatory papules on the skin, which have a tendency to spread and are covered with loose silvery-yellow scales. When elements of the rash are scraped, the 'stearin spot' symptom is observed. The patient's genealogical history is normal. What is the most likely diagnosis?",
+        o: ["Dermatophytosis", "Eczema", "Lichen ruber planus", "Allergic dermatitis", "Psoriasis"],
+        a: 4
+    },
+    {
+        q: "A 23-year-old man has accidentally swallowed brake fluid. After that he has been presenting with anuria for 5 days already; his creatinine levels elevated up to 0.569 mmol/L. What treatment tactics should be chosen in this case?",
+        o: ["Diuretics", "Antidotal therapy", "Hemodialysis", "Plasmapheresis", "Detoxication therapy"],
+        a: 2
+    },
+    {
+        q: "A 19-year-old young woman complains of absence of menstruations, lethargy, and weight loss. One year ago she had a pathological childbirth with significant blood loss and no lactation after the childbirth. Vaginal examination shows that the vagina is narrow, the uterus is reduced in size, and the ovaries are not palpable. Laboratory testing detected hypoestrogenemia. What is the most likely diagnosis?",
+        o: ["Stein-Leventhal syndrome", "Hypothyroidism", "Astheno-vegetative syndrome", "Genital tuberculosis", "Sheehan syndrome"],
+        a: 4
+    },
+    {
+        q: "A 64-year-old patient with a tumor of the sigmoid colon and chronic thrombophlebitis of the deep veins of the right leg is scheduled for a surgery. What is the optimal medicine for prevention of deep vein thrombosis in this patient?",
+        o: ["Phenylinum (Phenindione)", "Low-molecular-weight heparin", "Regular heparin", "Acetylsalicylic acid", "Rheopolyglucin (Dextran)"],
+        a: 1
+    },
+    {
+        q: "A 40-year-old patient presents with cough in the morning with production of mucopurulent sputum and elevated body temperature up to 37.6°C. He has been smoking since he was 17 years old. Objectively, auscultation detects coarse respirations and diffuse dry crackles in the lungs. Complete blood count: leukocytes - 12x10^9/L, ESR-19 mm/hour. Bronchoscopy shows purulent catarrhal endobronchitis. Make the diagnosis:",
+        o: ["Lung cancer", "Bronchial asthma", "Community-acquired pneumonia", "Pulmonary tuberculosis", "Chronic bronchitis"],
+        a: 4
+    },
+    {
+        q: "A 5-day-old girl from the first pregnancy was born with the weight of 3100 g and the length of 51 cm. Her Apgar score was 8/9. On the 3rd day she developed icteric skin. On the 4th day of life her condition is satisfactory, she suckles well, her voice is loud. The umbilical wound is clean. In the lungs there is a puerile respiration, heart sounds are sonorous. The abdomen is soft, the liver is +1 cm, the spleen is '-'. The feces are yellow. The blood group of the mother is A (II) Rh+. The blood group of the child is 0 (1) Rh+. Bilirubin levels on the 4th day are as follows: indirect 140 mcmol/L, direct-0, ALT-25 mmol/L AST-18 mmol/L. Make the diagnosis:",
+        o: ["Hemolytic anemia", "Congenital hepatitis", "Biliary atresia", "Hemolytic disease of the newborn", "Physiological jaundice"],
+        a: 4
+    },
+    {
+        q: "A 57-year-old man, a miner, complains of a pain in his chest, dyspnea on physical exertion, excessive sweating, constant subfebrile temperature, and cough that produces blood-streaked sputum. He has been smoking for approximately 40 years (2 packs a day) and frequently has 'pneumonias'. Survey chest X-ray shows a triangular shadow in the middle lobe of the right lung. One of the apices of the shadow points to the lung root. Cardiac and mediastinal shadows are displaced toward the affected area. Make the provisional diagnosis:",
+        o: ["Pneumoconiosis", "Tuberculosis of the right lung", "Cancer of the right lung", "Chronic bronchitis", "Right-sided pleuropneumonia"],
+        a: 2
+    },
+    {
+        q: "A medical committee consisting of a therapist, dermatologist, traumatologist, ophthalmologist, neurologist, immunologist, surgeon, otolaryngologist, and hematologist was called in for the regular medical examination of the workers at a chemical factory that produces chromium- and nickel-containing mineral compounds. Name the minimum composition of such a committee, taking into account the characteristics of the products manufactured by the factory:",
+        o: ["Therapist, hematologist, ophthalmologist", "Otolaryngologist, therapist, dermatologist", "Therapist, immunologist, surgeon", "Therapist, dermatologist, traumatologist", "Therapist, ophthalmologist, neurologist"],
+        a: 1
+    },
+    {
+        q: "An 18-year-old patient complains of skin rash. The patient has been suffering from this condition for 5 years. The first instance of this disease occurred after a car accident. Objectively: the patient presents with a papular rash covered in silvery scales, 'thimble' sign (small pits on the nails), affected joints. What is the most likely diagnosis?",
+        o: ["Lupus erythematosus", "Rheumatism", "Panaritium", "Onychomycosis", "Psoriasis"],
+        a: 4
+    },
+    {
+        q: "During medical examination of a group of children under 4 years carried out by a pediatric team in one of the African countries a set of similar pathological signs was detected in some of the children. The signs are as follows: growth inhibition, mental changes, muscle atrophy, swellings, changes in hair and skin pigmentation. These children were diagnosed with kwashiorkor. What food products should be added to the diet to treat this disorder?",
+        o: ["Milk, meat, vegetables", "Fish, vegetables, cereals", "Poultry, fruit, berries", "Vegetables, fruit", "Cereals, fruit, berries"],
+        a: 1
+    },
+    {
+        q: "A 25-year-old man developed hematuria after an overexposure to cold. Objectively, his blood pressure is 160/110 mm Hg. Urinalysis reveals the following: proteinuria 3.5 g/L, erythrocytes cover the entire vision field, there are 5-6 hyaline cylinders (casts) in sight. What diagnostic method would be most informative in this case?",
+        o: ["Excretory urography", "Kidney ultrasound", "Cystoscopy", "Tomography", "Kidney biopsy"],
+        a: 4
+    },
+    {
+        q: "A 37-year-old woman received an occupational trauma that resulted in a severe vision impairment. Now she needs to be trained for another occupation. What type of rehabilitation should the doctor choose for the patient in this case?",
+        o: ["Occupational rehabilitation", "Social rehabilitation", "Psychological rehabilitation", "Medical rehabilitation", "Target rehabilitation"],
+        a: 0
+    },
+    {
+        q: "A 44-year-old man had been drinking 0.5-0.8 liters of vodka every day for 6 days prior to seeking help of a psychiatrist. On the third day at night, he could not sleep, became anxious, believed that he was 'at a factory', and complained that he could see 'a horror movie on the wall' and heard screams from the street with threats to kill him. What is the most likely diagnosis in this case?",
+        o: ["Somatogenic psychosis", "Delirium tremens", "Obsessive-phobic neurosis", "Occupational delirium", "Alcoholic hallucinosis"],
+        a: 1
+    },
+    {
+        q: "A 50-year-old man complains of general weakness, dizziness, periodical episodes of unconsciousness, and an intense pain in the small of his back and right subcostal region. These signs appeared after an accident at a paint factory, where he works. His skin is earth-gray and his sclerae are icteric. He has acrocyanosis. His blood pressure is 100/60 mm Hg. His heart sounds are muffled. His liver is +3 cm and has a dense edge. Blood test shows the following: erythrocytes 2.0x10^12/L, Hb-90 g/L, Heinz-Ehrlich bodies, leukocytes 5.6x10^9/L, ESR - 15 mm/hour, methemoglobin 62%, total bilirubin - 84.0 mcmol/L, indirect bilirubin - 71.7 mcmol/L. What is the most likely diagnosis?",
+        o: ["Chronic cyanide poisoning", "Acute aniline poisoning", "Acute toluene poisoning", "Acquired hemolytic anemia", "Acute viral hepatitis"],
+        a: 1
+    },
+    {
+        q: "An 18-year-old adolescent bought at a store a salad with smoked fish, mushrooms, and mayonnaise. Six hours after eating the salad, he developed progressive weakness, vision impairment, 'fog in the eyes', and problems with swallowing. He was hospitalized. Examination detects the body temperature of 36.0°C and pale skin and mucosa. The patient is adynamic, answers questions sluggishly. The pupils are dilated, with reduced response to light. The patient's voice is hoarse, his oral mucosa is dry. What type of food poisoning can be suspected?",
+        o: ["Botulism", "Mushroom poisoning", "Salmonellosis", "Fish poisoning", "Staphylococcal intoxication"],
+        a: 0
+    },
+    {
+        q: "One year ago an 8-year-old boy had a case of hepatitis B. For the last two months he has been complaining of fatigability, disturbed sleep, loss of appetite, and nausea, especially in the morning. His skin is not icteric, the liver and spleen are painless and can be palpated 1 cm below the costal margin. His ALT levels are 220 units. How can this condition be interpreted?",
+        o: ["Recurrence of viral hepatitis B", "Biliary dyskinesia", "Development of hepatic cirrhosis", "Development of chronic hepatitis", "Residual effects of hepatitis B"],
+        a: 3
+    },
+    {
+        q: "A 45-year-old man has been suffering from duodenal ulcer disease for 5 years. He complains of weakness, dizziness, dryness of the skin. Objectively: the skin and visible mucosa are pale, chapped lips; heart rate is 100/min., BP-100/70 mm Hg, systolic murmur at all points on heart auscultation. All other internal organs are unchanged. Fecal occult blood test is positive. Blood test: erythrocytes - 3.1x10^12/l, Hb- 88 g/l, color index 0.7, leukocytes - 4.6x10^9/ , platelets - 350x10^9/ , ESR-21 mm/hour, anisocytosis, poikilocythemia, serum iron - 9.5 mcmol/l. What treatment tactics would you choose?",
+        o: ["Corticosteroids, cytostatics", "Ascorbic acid, calcium chloride", "Intramuscular introduction of 500 mkg of cyanocobalamin", "Iron preparations, balanced diet", "Concentrated red cells transfusion"],
+        a: 3
+    },
+    {
+        q: "A woman with polycystic kidney disease observes an increase in her 24-hour urine output to 2-2.5 liters. Dynamic nephroscintigraphy shows the following: total glomerular filtration rate 34 mL/min, serum creatinine - 84 mcmol/L, urea 8.0 mmol/L. What stage of chronic kidney failure is it?",
+        o: ["Polyuric", "Intermittent", "Latent", "Terminal", "Compensated"],
+        a: 4
+    },
+    {
+        q: "A 27-year-old woman, a teacher in the elementary school, complains of frequent stools, up to 3 times per day, with lumpy feces and large amount of mucus, abdominal pain that gradually abates after a defecation, irritability. Her skin is pale and icteric. Pulse is 74/min., rhythmic, can be characterized as satisfactory. Blood pressure is 115/70 mm Hg. The abdomen is soft, moderately tender along the colon on palpation. Fiberoptic colonoscopy detects no changes. What disease can be suspected?",
+        o: ["Crohn disease (regional enteritis)", "Irritable bowel syndrome", "Whipple disease", "Chronic non-ulcerative colitis", "Chronic enteritis"],
+        a: 1
+    },
+    {
+        q: "A 46-year-old woman was awakened at 3 a.m. by a sharp pain in her right subcostal region that irradiated into her right shoulder. The woman is anxious, had two episodes of vomiting, notes fever and excessive sweating. Her temperature is 39.0°C. Objectively, her abdominal muscles are tense in the right subcostal region. Make the diagnosis:",
+        o: ["Cholelithiasis", "Benign stricture of the common bile duct", "Unstable angina pectoris", "Peptic ulcer disease", "Acute cholecystitis"],
+        a: 4
+    },
+    {
+        q: "A 56-year-old woman has been working as a disinfector for 19 years. She complains of general weakness, nausea, bitter taste in her mouth, heavy sensation in her right subcostal area, and rapid fatigability. Objectively, her body temperature is 37.1°C, the sclerae are icteric, and the liver is enlarged. Total bilirubin is 40 mcmol/L. What is the likely diagnosis?",
+        o: ["Chronic cholecystitis", "Chronic pancreatitis", "Occupational toxic hepatitis", "Biliary dyskinesia", "Acute cholecystitis"],
+        a: 2
+    },
+    {
+        q: "An 8-year-old child is being monitored for growth retardation. The child was born with asphyxia and the body weight of 2800 g. He studies well at school. His parents are of average height. Objectively, height - 107 cm, body weight - 23 kg, he has underdeveloped facial skeleton that resembles a doll's face. The hair is thin, the skin is dry with an icteric tint. Subcutaneous adipose tissue is well developed on the neck, chest, and abdomen. The muscles are underdeveloped. What is the most likely diagnosis?",
+        o: ["Pituitary dwarfism", "Chondrodystrophy", "Craniopharyngioma", "Fanconi syndrome", "Down syndrome"],
+        a: 0
+    },
+    {
+        q: "The 5-year-old child has been ill for 2 weeks. Cough attacks developed first and were then followed by reprises. During coughing the child's face turns red and cervical veins bulge. The cough attacks induce vomiting. X-ray shows intensified bronchial pattern. Blood test: leukocytes-16x10^9/L, lymphocytes -72%, erythrocyte sedimentation rate 4 mm/hour. What is the most likely diagnosis?",
+        o: ["Foreign body", "Pertussis", "Adenovirus infection", "Pneumonia", "Obstructive bronchitis"],
+        a: 1
+    },
+    {
+        q: "A man suffers from urolithiasis and periodically develops hyperoxaluria. What products should be reduced in his diet?",
+        o: ["Dairy products", "Meat, fish", "Fatty foods", "Canned soup", "Sorrel, spinach, tomatoes"],
+        a: 4
+    },
+    {
+        q: "A neonatologist examines a full-term baby born from the second pregnancy, second full-term delivery, with the body weight of 3980 g. During the delivery, primary weakness of the labor activity was observed and obstetric assistance was used. Objectively, the right hand is adducted to the trunk and rotated, there are no movements in the shoulder and elbow joints, the 'doll's arm' sign is observed, the hand is in the position of palmar flexion. The baby breastfeeds, suckles actively. What is the most likely diagnosis?",
+        o: ["Dejerine-Klumpke paresis", "Total brachial plexus paresis", "Duchenne-Erb paresis", "Dislocation of the right shoulder", "Humerus fracture on the right"],
+        a: 2
+    },
+    {
+        q: "A 10-year-old boy came to the polyclinic with complaints of stuffy nose. It is known that these signs occur in the child periodically (in spring and autumn). He has a history of atopic dermatitis. The father of the child has bronchial asthma. Objectively, the boy's face is pale and slightly swollen. Respirations are 22/min. Auscultation detects vesicular respiration over the lungs. Rhinoscopy shows swollen and pale nasal mucosa. What disease can be suspected?",
+        o: ["Acute rhinitis", "Acute maxillary sinusitis", "Acute adenoiditis", "Allergic rhinitis", "Recurrent respiratory disease"],
+        a: 3
+    },
+    {
+        q: "A 40-year-old woman has been suffering from epilepsy since she was 15. Generalized epileptic seizures occur 2-3 times a month at night and are accompanied by involuntary urination and defecation. After a psychotrauma (her father's death), the attacks became more frequent and now occur every 2-3 minutes. The woman does not return to consciousness between the attacks, her pupils are unresponsive to light. What is the most likely diagnosis?",
+        o: ["An increase in the number of grand mal seizures", "Hysterical attack", "Status epilepticus", "Absence seizure", "Epileptic psychosis"],
+        a: 2
+    },
+    {
+        q: "A 51-year-old man was hit by a car. He complains of a pain in his pelvis on the left. Examination shows no disturbances of pelvic configuration, there is a swelling in the left inguinal region. Palpation of this region is sharply painful. The Larrey's sign and Gabai's sign are positive, the patient is unable to lift the extended leg, as if the heel was glued down. Make the provisional diagnosis:",
+        o: ["Fracture of the superior pubic ramus", "Fractures of the base of the cotyloid cavity", "Pubic symphysis fracture", "Superior iliac spine fracture", "Fracture of the ischium"],
+        a: 0
+    },
+    {
+        q: "On the 5th day after giving birth a postparturient woman complains of a pain in her left mammary gland and body temperature up to 38.1°C. Examination shows that her mammary gland is enlarged and painful on palpation, the nipple is edematous and has fissures, the upper external quadrant of the gland is hyperemic. Name the measures that would have prevented the development of this complication in the patient:",
+        o: ["Constant expression of breast milk", "Feeding on demand, expression of breast milk, prevention of nipple fissures", "Feeding no longer that 10 minutes through an overlay", "Stop breastfeeding when fissures appear", "Feeding on schedule"],
+        a: 1
+    },
+    {
+        q: "After being stung by a bee, an 18-year-old patient feels hot and presents with dyspnea and edema of her lip, face, and neck. The patient's breathing is difficult and noisy, the patient has cough. The skin is pale and cold to the touch. Blood pressure - 75/50 mm Hg. Pulse - 98/min., thready. Tachycardia is observed, the heart sounds are muffled and rhythmic. What is the most likely diagnosis?",
+        o: ["Urticaria", "Quincke's edema", "Status asthmaticus", "Hypotonic crisis", "Anaphylactic shock"],
+        a: 4
+    },
+    {
+        q: "A 20-year-old patient came to a doctor with complaints of a rash that appeared on the skin. Objectively, on the skin of the trunk, arms, and the back of the neck, there is a macular rash with light brown spots 1-3 cm in size that in some places merge together. The results of Balzer test are positive. What is the most likely diagnosis?",
+        o: ["Microbial eczema", "Pityriasis rosea", "Secondary syphilis", "Tinea versicolor (Pityriasis versicolor)", "Parapsoriasis"],
+        a: 3
+    },
+    {
+        q: "A 20-year-old woman has been developing rhinitis and conjunctivitis in August-September for the last 8 years. The last year during this period, attacks of bronchial asthma started occurring as well. Skin testing detects hypersensitivity to Ambrosia pollen. The antibodies that cause the exacerbation of this condition belong to the following class of immunoglobulins:",
+        o: ["Immunoglobulin D", "Immunoglobulin A", "Immunoglobulin G", "Immunoglobulin M", "Immunoglobulin E"],
+        a: 4
+    },
+    {
+        q: "A man suddenly developed a sharp retrosternal pain that radiated into the left arm. Objectively, the patient was excited, his skin was pale, the respiration rate was 38/min., the blood pressure was 180/110 mm Hg. Later he lost his consciousness, fell down, the pulse on the major vessels could not be detected, the pupils were evenly dilated. What is the diagnosis in this case?",
+        o: ["Cerebral circulation disorder", "Coma", "Agonal state", "Clinical death", "Heart attack"],
+        a: 3
+    },
+    {
+        q: "After an overexposure to cold, a 32-year-old man developed general weakness, excessive sweating, fever, and cough. Objectively, his overall condition is moderately severe, his skin is moist, his lips are cyanotic. His chest is symmetrically involved in the act of breathing. Under the shoulder blade on the right, the percussion sound is slightly dull; vesicular respiration there is weakend, with sonorous moist finely-vesicular crackles. Above the rest of the lung surface there is harsh breathing with scattered dry crackles. The heart sounds are intensified, the second heart sound is accentuated over the pulmonary artery. In the blood: leukocytes 13.2x10^9/L, ESR-21 mm/hour. Make the diagnosis:",
+        o: ["Tuberculosis", "Right-sided focal pneumonia", "Acute bronchitis", "Exacerbation of chronic non-obstructive bronchitis", "Lung cancer"],
+        a: 1
+    },
+    {
+        q: "A 32-year-old woman complains of marked shortness of breath, dry cough, a fever of 39°C, and excessive sweating. Bacterioscopy of her sputum detected acid-fast bacteria [+]. Mantoux test with 2 tuberculin units resulted in a papule 21 mm in size. X-ray visualizes numerous symmetrically located focal shadows 1-2 mm in size in both lungs. The shadows are low-intensity and have blurry contours. What is the most likely diagnosis?",
+        o: ["Focal tuberculosis", "Caseous pneumonia", "Sarcoidosis", "Chronic disseminated pulmonary tuberculosis", "Miliary pulmonary tuberculosis"],
+        a: 4
+    },
+    {
+        q: "A 45-year-old man was delivered to a hospital with complaints of vomiting with streaks of blood, loss of weight. On esophagofiberscopy a cauliflower-shaped mucosal growth was detected in the abdominal esophagus. The mucosa there bleeds on contact. What preliminary diagnosis can be made?",
+        o: ["Esophageal tumor", "Esophageal achalasia", "Abdominal esophagitis", "Esophageal diverticulum", "Barrett esophagus"],
+        a: 0
+    },
+    {
+        q: "A 16-year-old teenager has been bitten by a dog. The bites are located in the area of face and fingertips. The dog is a stray and cannot be observed. Primary surgical treatment of the wound was performed without removal of the wound edges. What tactics should be chosen by a doctor for rabies prevention?",
+        o: ["Prescribe human immunoglobulin and ribavirin", "Prescribe anti-rabies immunoglobulin and anti-rabies vaccine", "Prescribe anti-rabies vaccine and human immunoglobulin", "Prescribe anti-rabies immunoglobulin and ribavirin", "Prescribe anti-rabies vaccine and ribavirin"],
+        a: 1
+    },
+    {
+        q: "A 35-year-old woman complains of pain in her left arm that progresses over the last 4 months and intensifies after physical exertion of the affected limb. Additionally, she notes a cold and 'tingling' sensation in her arm. The pain decreases slightly at night, when the arm hangs down from the bed. Moreover, the woman notes deteriorating vision and the weight loss of 4 kg. She does not smoke. Objectively, she is undereating, the pulse on the left arm cannot be found. There is no pulsation over the left carotid artery, a murmur is heard above the right carotid artery. Make the diagnosis:",
+        o: ["Arterial thrombosis of the left arm", "Neurological amyotrophy", "Dermatomyositis", "Systemic lupus erythematosus", "Obliterating aortoarteritis"],
+        a: 4
+    },
+    {
+        q: "A boy had a foreign body removed from under his nail plate. 3 days later he developed a sharp throbbing pain at the end of his distal phalanx, which intensifies when the phalanx is pressed, hyperemia of the nail fold, elevated body temperature up to 38.5°C, and nail plate discoloration. Make the diagnosis:",
+        o: ["Erysipelas", "Paronychia", "Subungual panaritium", "Erysipeloid", "Abscess"],
+        a: 2
+    },
+    {
+        q: "A 3-year-old child has developed a cough and runny nose. Two other family members have the same signs. On the third day after the onset of the disease, the cough intensified and became dry and persistent. The temperature increased to 37.8°C. Objectively, the act of breathing involves the auxiliary muscles. Percussion produces a banbox resonance bilaterally in the lungs. Breathing is harsh, expiration is prolonged, there are moderate and large bubbling wheezes. The wheezes are diffuse and mostly wet, though in some places they are dry. Make the diagnosis:",
+        o: ["Bilateral bronchopneumonia", "Acute bronchiolitis", "Bronchial asthma", "Acute obstructive bronchitis", "Stenosing laryngotracheitis"],
+        a: 3
+    },
+    {
+        q: "A 44-year-old woman complains of general weakness, drowsiness, palpitations, dry skin, and reduced working ability. Objectively, she has normal-colored skin, pulse - 72/min., blood pressure - 125/80 mm Hg, the thyroid gland is diffusely enlarged to the II degree, dense, mobile, and painful. Ultrasound reveals decreased echogenicity, non-homogeneity of the echo structure, thickening of the gland capsule. Blood test shows that T4 levels are decreased, TSH levels are increased, and the levels of antibodies to thyroperoxidase and anti-microsomal antibodies are significantly increased. What is the most likely diagnosis?",
+        o: ["Autoimmune thyroiditis", "Diffuse toxic goiter, II degree", "Subacute thyroiditis", "Diffuse euthyroid goiter, II degree", "Thyroid cancer"],
+        a: 0
+    },
+    {
+        q: "A 14-year-old girl has short stature, broad shoulders, webbed neck, and no signs of puberty. Her intelligence is normal. Ultrasound of the lesser pelvis shows hypoplasia of the uterus and the absence of ovaries. Karyotype of the child is 45, X0. What pathological syndrome can be suspected in this case?",
+        o: ["Klinefelter syndrome", "Turner syndrome", "Edwards syndrome", "Patau syndrome", "Down syndrome"],
+        a: 1
+    },
+    {
+        q: "A 78-year-old woman complains of lumbar pain. The pain increases during movements, decreases at rest, and does not irradiate to other areas. Her temperature is normal, the body weight remains unchanged. Objectively, her peripheral joints are normal, she has moderate obesity, the mobility of the lumbar spine is limited. A local tension is observed in the soft tissues over the L2 vertebra. In the blood: Hb-147 g/L, leukocytes 8.8x10^9/L, platelets 222x10^9/L, ESR-5 mm/hour, Na+ - 140 mmol/L, K+ - 4.2 mmol/L, Ca2+ - 2.35 mmol/l. Make the diagnosis:",
+        o: ["Sciatica", "Multiple myeloma", "Secondary hyperparathyroidism", "Osteoporosis with a pathological fracture", "Amyloidosis"],
+        a: 3
+    },
+    {
+        q: "A 58-year-old man had a moderate ischemic stroke in the right hemisphere of the brain 10 days ago. At the time of hospitalization, the deficit score on the NIHSS scale was 9 points. He suffers from moderate arterial hypertension, atrial fibrillation, urolithiasis, and gout (remission). What must be prescribed to the patient for secondary prevention of stroke?",
+        o: ["Aspirin, 100 mg per day", "High doses of lipid-lowering agents", "Oral anticoagulants (warfarin or NOACs)", "Drugs that improve cerebral blood flow", "Clopidogrel, 75 mg per day"],
+        a: 2
+    },
+    {
+        q: "A premature baby born at 34 weeks of gestation presents with the following at 4 hours after birth: tachypnea, respiration with a seesaw motion, sternum depression, expiratory murmurs. Respiratory rate - 80/min. Auscultation detects weakened breathing with non-constant heterogeneous crackles over the lungs. X-ray of the lungs shows air bronchogram and a nodose-reticular lung pattern. What is the most likely diagnosis?",
+        o: ["Massive meconium aspiration syndrome", "Birth injury", "Neonatal pneumonia", "Pulmonary atelectasis", "Hyaline membrane disease"],
+        a: 4
+    },
+    {
+        q: "A variety of lighting fixtures are used to illuminate classrooms. What kind of lighting fixtures creates the most hygienically acceptable lighting?",
+        o: ["Lighting fixtures that provide direct lighting", "Lighting fixtures that provide reflected lighting", "Lighting fixtures that provide combined lighting", "Lighting fixtures that provide semi-reflected lighting", "Lighting fixtures that provide scattered lighting"],
+        a: 1
+    },
+    {
+        q: "A 45-year-old man, a farmer, presents with acute onset of a disease. He complains of headache, high temperature, pain in the gastrocnemius muscles, icteric face, and dark urine. Objectively: body temperature - 38°C, blood pressure - 100/70 mm Hg, conjunctival hemorrhages, hepatosplenomegaly, and oliguria. What is the most likely provisional diagnosis?",
+        o: ["Leptospirosis", "Trichinosis", "Brucellosis", "Viral hepatitis", "Pseudotuberculosis"],
+        a: 0
+    },
+    {
+        q: "In a maternity hospital a newborn had been presenting with cough attacks after eating. The child was discharged from the hospital on the 18th day due to a case of pneumonia. During the further 1,5 months the child had 2 cases of pneumonia. Periodically there are cough attacks after eating, especially if the child lies on the left side. Objectively: the II degree hypotrophy, isolated moist crackles, dyspnea. Stool and diuresis are not disrupted. What diagnosis is most likely?",
+        o: ["Posthypoxic encephalopathy", "Tracheobronchomalacia", "Mucoviscidosis", "Hernia of the esophageal opening", "Tracheoesophageal fistula"],
+        a: 4
+    },
+    {
+        q: "For 20 years the role of excessive weight in ischemic heart disease development among the working age male population over 40 was studied. It was determined that overweight men developed ischemic heart disease more often. What type of epidemiological study is it?",
+        o: ["Case report", "Experimental study", "Case series report", "Cohort study", "Case-control study"],
+        a: 3
+    },
+    {
+        q: "A 29-year-old woman complains of infertility and an irregular menstrual cycle (oligomenorrhea). Examination detected the following: height - 160 cm, body weight - 91 kg, growth of hair on the face and thighs. Bimanual examination revealed enlarged dense ovaries 5x6 cm in size on both sides. Ultrasound confirmed these findings. What is the cause of the woman's complaints?",
+        o: ["Sclerocystic ovary syndrome (Stein-Leventhal syndrome)", "Premenstrual syndrome", "Adrenogenital syndrome", "Chronic bilateral adnexitis", "Ovarian androblastoma"],
+        a: 0
+    },
+    {
+        q: "For three weeks, a 29-year-old patient has been observing a painless ulcer on the skin of the vermilion border of the lower lip. The last week, the ulcer became accompanied by significant edema of the underlying and surrounding tissues. Examination shows an ulcer up to 2.5-3 cm in diameter, with clear margins, the bottom that resembles 'old lard' in color, and an underlying cartilaginous infiltrate. What laboratory test must be prescribed first in this case?",
+        o: ["Skin scraping for mycosis", "Smear for acantholytic cells", "Treponema pallidum test", "Eosinophil count", "Bacterial culture"],
+        a: 2
+    },
+    {
+        q: "A 47-year-old man developed the signs of decompensated laryngeal stenosis against the background of acute flegmonous laryngitis. He presents with inspiratory dyspnea at rest, forced position, cyanotic skin covered in cold sweat, tachycardia, deficient pulse, and low blood pressure. What urgent treatment tactics should be chosen?",
+        o: ["Oral administration of hyposensitization substances and broncholytics", "Oxygen therapy", "Intravenous administration of dehydrating agents", "Tracheostomy", "Administration of glucocorticoid hormones"],
+        a: 3
+    },
+    {
+        q: "A 25-year-old man was hospitalized with complaints of pain in his lower abdomen and right lumbar area that appeared one hour ago. Patient's general state is moderately severe. Body temperature - 38.2°C, heart rate - 102/min. The tongue is dry. The abdomen is painful on deep palpation in the right iliac area and in the Petit triangle. Aure-Rozanov and Gabay signs are positive. Make the provisional diagnosis:",
+        o: ["Intestinal obstruction", "Acute cholecystitis", "Acute appendicitis", "Right-sided renal colic", "Cecal tumor"],
+        a: 2
+    },
+    {
+        q: "A 30-year-old man came to the family physician. 2 months ago he underwent a surgery for open fracture of the humerus. On examination the patient's condition is satisfactory; in the area of the postoperative wound there is a fistula that discharges a small amount of pus; the area itself is red; fluctuation is detected. X-ray shows destruction of the humerus with sequestra. What complication did the patient develop during the postoperative period?",
+        o: ["Posttraumatic osteomyelitis", "Posttraumatic phlegmon", "Hematogenous osteomyelitis", "Wound suppuration", "Suture sinus"],
+        a: 0
+    },
+    {
+        q: "The microclimate of industrial premises can be characterized by the following parameters: average air temperature - +35°C, radiant temperature - +30°C, relative air humidity - 50%, air flow velocity - 0.01 m/s. Name the main type of heat transfer that takes place in such microclimatic conditions.",
+        o: ["Radiation", "Convection", "Radiation (duplicate option in source, assuming distinct)", "Evaporation", "Conduction"],
+        a: 3
+    },
+    {
+        q: "What medical professional can be involved in the examination of a dead body at the scene of an accident by the investigator, if a forensic medical expert is unavailable?",
+        o: ["Only an anatomical pathologist", "Only a surgeon or an anesthesiologist", "Any doctor", "Only a therapist or an anatomical pathologist", "Only a family doctor or an anatomical pathologist"],
+        a: 2
+    },
+    {
+        q: "The history of a 70-year-old patient states that the disease onset was approximately six months ago. According to her relatives, her memory of current events was sharply deteriorating, in particular, she was forgetting the way home when returning from the store and started experiencing difficulties while performing her usual daily activities. The memory of past events was retained. Signs of semantic and amnestic aphasia were observed. Echolalia is periodically noted. The patient is in a low mood and has slight anxiety. She has a history of craniocerebral trauma and had diabetes mellitus for approximately 15 years. What is the most likely diagnosis?",
+        o: ["Vascular dementia", "Involutional depression", "Encephalitis", "Brain tumor", "Alzheimer's disease"],
+        a: 4
+    },
+    {
+        q: "A 65-year-old man complains of cough attacks that occur when he eats liquid foods. Three months ago he was diagnosed with a carcinoma in the upper third of the esophagus. He underwent radiation therapy. What complication developed in this man?",
+        o: ["Perforation of a gastric cardia ulcer", "Lung abscess rupture into the pleural cavity", "Spontaneous pneumothorax", "Tracheal stenosis", "Tracheoesophageal fistula"],
+        a: 4
+    },
+    {
+        q: "A planner designs a heating system for a pre-school educational establishment. The highest air temperature should be in the following room:",
+        o: ["Common room of a preschool group", "Game room of a nursery group", "Bedroom of a nursery group", "Bedroom of a preschool group", "Gymnasium"],
+        a: 1
+    },
+    {
+        q: "A 45-year-old woman complains of general weakness, dyspnea, and dizziness. Within one year her hair became gray, her nails started peeling, and she developed gustatory disorders. For the last 5 years she has been registered for regular check-ups with a gynecologist for uterine fibromyoma. Her blood test shows the following: erythrocytes 3.0x10^12/L, Hb-76 g/L, color index - 0.7, reticulocytes - 0.7%, platelets 160x10^9/L, leukocytes 5.0x10^9/L, eosinophils - 2%, band neutrophils - 3%, segmented neutrophils - 63%, lymphocytes - 28%, monocytes 4%, aniso- and microcytosis, ESR - 30 mm/hour. What type of anemia can be suspected?",
+        o: ["Hypoplastic anemia", "B12-deficiency anemia", "Iron-deficiency anemia", "Minkowski-Chauffard syndrome", "Autoimmune hemolytic anemia"],
+        a: 2
+    },
+    {
+        q: "A woman has focal encephalitis in the anamnesis. Her spatial orientation is not disrupted. She has a sensation, as if 'everything seems surreal: buildings are small, round or distorted; trees are upside down; people are very tall with thin limbs'. Determine the psychopathologic syndrome:",
+        o: ["Derealization", "Oneiric", "Hallucinatory", "Depersonalization", "Cenestopathic"],
+        a: 0
+    },
+    {
+        q: "A 32-year-old woman complained of a sudden piercing headache and fell down unconscious. In an ambulance, an emergency physician noted her severe condition, sopor, and meningeal syndrome. After her hospitalization, the lumbar puncture yielded bloody cerebrospinal fluid. Her cerebrospinal fluid pressure is 260 mm H20. Make the provisional diagnosis:",
+        o: ["Meningioma", "Meningoencephalitis", "Traumatic brain injury", "Ischemic stroke", "Aneurysm rupture, subarachnoid hemorrhage"],
+        a: 4
+    },
+    {
+        q: "A 12-year-old girl became acutely ill with a fever of 38.5°C and a rash appearing on her skin. Objectively, her condition is of moderate severity, she has hepatosplenomegaly, fine punctate rash and maculopapular rash on the flexor surfaces of her limbs, lateral surfaces of the trunk, and lower abdomen. Demarkated bluish-pink coloring is observed on her hands and feet. What is the most likely diagnosis?",
+        o: ["Scarlet fever", "Pseudotuberculosis", "Measles", "Chickenpox", "Infectious mononucleosis"],
+        a: 1
+    },
+    {
+        q: "A 4-month-old boy has been undergoing in-patient treatment for pneumocystic pneumonia for 4 weeks. The diagnosis has been made based on clinical signs, typical X-ray presentation, presence of severe hypoxemia, positive dynamics caused by intravenous introduction of Biseptol (Co-trimoxazole). Anamnesis states that enzyme-linked immuno sorbent assay (ELISA) detected antibodies to HIV in the umbilical blood. Polymerase chain reaction (PCR) was performed on the child at the ages of 1 month and 3 months, and proviral DNA was detected in the child's blood. Viral load and number of CD4+-lymphocytes was not measured. Make the diagnosis:",
+        o: ["HIV/AIDS", "Adenovirus infection", "Pneumonia", "Infectious mononucleosis", "Tuberculosis"],
+        a: 0
+    },
+    {
+        q: "Throughout the last year a 27-year-old man notes fatigue, excessive sweating, and heaviness in his left subcostal region, especially after eating. Objectively, his spleen and liver are enlarged. In clinical blood test: erythrocytes 3.2x10^12/L, Hb-100 g/L, color index - 0.87, leukocytes-100x10^9/L,
+
 
 let state = {
   today: new Date().toDateString(),
