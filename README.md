@@ -409,7 +409,7 @@ const fullQuestionPool = [
         a: 0
     },
     {
-        q: "Throughout the last year a 27-year-old man notes fatigue, excessive sweating, and heaviness in his left subcostal region, especially after eating. Objectively, his spleen and liver are enlarged. In clinical blood test: erythrocytes 3.2x10^12/L, Hb-100 g/L, color index - 0.87, leukocytes-100x10^9/L,
+        
 
 
 let state = {
