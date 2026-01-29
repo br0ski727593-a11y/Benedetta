@@ -1,78 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Daily Medical Quiz</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:Arial,sans-serif;background:#667eea;min-height:100vh;padding:20px;color:#111}
-    h1{text-align:center;color:#fff;margin:10px 0 20px}
-    .container{max-width:700px;margin:0 auto;background:#fff;border-radius:12px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,0.15)}
-    .top-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-    .stat{text-align:center;font-size:12px}
-    .stat span{display:block;font-size:22px;font-weight:bold;color:#667eea}
-    .progress{margin:15px 0}
-    .bar{height:8px;border-radius:4px;background:#e5e7eb;overflow:hidden}
-    .fill{height:100%;width:0;background:#667eea;transition:width .3s}
-    .menu{text-align:center;margin-top:10px}
-    .menu p{margin:10px 0;color:#555}
-    .question-box{margin-top:10px}
-    .q-header{font-size:14px;color:#666;margin-bottom:5px}
-    .q-text{background:#f9fafb;border-left:4px solid #667eea;border-radius:8px;padding:15px;font-size:15px;line-height:1.5}
-    .options{margin-top:15px;display:flex;flex-direction:column;gap:8px}
-    .option{border:2px solid #e5e7eb;border-radius:8px;padding:10px;cursor:pointer;font-size:14px;background:#fff;display:flex;align-items:flex-start;gap:8px;transition:all .2s}
-    .option:hover{border-color:#667eea;background:#eff6ff}
-    .option.selected{border-color:#667eea;background:#eef2ff}
-    .option.correct{border-color:#16a34a;background:#dcfce7}
-    .option.wrong{border-color:#dc2626;background:#fee2e2}
-    .feedback{margin-top:10px;padding:10px;border-radius:8px;font-size:14px;display:none}
-    .feedback.show{display:block}
-    .feedback.ok{background:#dcfce7;color:#166534}
-    .feedback.bad{background:#fee2e2;color:#991b1b}
-    button{width:100%;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;margin-top:12px}
-    .btn-main{background:#667eea;color:#fff}
-    .btn-main:disabled{opacity:.5;cursor:not-allowed}
-    .btn-secondary{background:#e5e7eb}
-    select{padding:6px 10px;border-radius:8px;border:1px solid #d1d5db;font-size:14px}
-    @media(max-width:600px){.container{padding:15px}.q-text{font-size:14px}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable Medical Quiz</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --surface: #ffffff;
+            --background: #f3f4f6;
+            --text: #1f2937;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .app-container {
+            background: var(--surface);
+            width: 100%;
+            max-width: 700px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Setup Screen Styles */
+        .setup-screen {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .input-group {
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        input[type="number"] {
+            padding: 0.8rem;
+            font-size: 1.2rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            width: 100px;
+            text-align: center;
+        }
+
+        /* Quiz Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--border);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .option-btn {
+            background: #f9fafb;
+            border: 2px solid var(--border);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+            font-weight: 600;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success);
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .option-btn.wrong {
+            border-color: var(--error);
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #6b7280;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
-<h1>📚 Daily Medical Quiz</h1>
-<div class="container">
-  <div class="top-row">
-    <div class="stat">Today<span id="statToday">-</span></div>
-    <div class="stat">Streak<span id="statStreak">0</span></div>
-    <div class="stat">Avg<span id="statAvg">-</span></div>
-    <div>
-      <label style="font-size:12px;color:#555">Questions:
-        <select id="qCount">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="150">150</option>
-          <option value="1000">1000</option>
-        </select>
-      </label>
+
+<div class="app-container">
+    
+    <div id="setup-view" class="setup-screen hidden">
+        <h1>Medical Quiz Setup</h1>
+        <p>There are <span id="total-available" style="font-weight:bold;">0</span> questions available.</p>
+        
+        <div class="input-group">
+            <label for="question-count">How many questions would you like?</label>
+            <input type="number" id="question-count" min="1" value="10">
+        </div>
+
+        <button class="btn" onclick="startNewQuiz()">Start Quiz</button>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn-outline" onclick="resumeQuiz()" id="resume-btn" style="display:none;">Resume Previous Session</button>
+        </div>
     </div>
-  </div>
 
-  <div class="progress">
-    <div class="bar"><div class="fill" id="progressFill"></div></div>
-  </div>
+    <div id="quiz-view" class="hidden">
+        <div class="header">
+            <div>
+                <h3 style="margin:0;">Quiz In Progress</h3>
+                <div id="score-display" style="font-size: 0.9rem; color: #6b7280;">Score: 0/0</div>
+            </div>
+            <button class="btn-outline" onclick="exitToSetup()">New Quiz</button>
+        </div>
 
-  <div id="content" class="menu">
-    <h2 style="color:#667eea;margin-bottom:10px">Daily Medical Quiz</h2>
-    <p>Choose how many questions you want and press Start.</p>
-    <button class="btn-main" onclick="startQuiz()">Start Quiz</button>
-  </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+        </div>
+
+        <div id="quiz-content">
+            <div class="question-text" id="question-text">Loading...</div>
+            <div class="options-grid" id="options-container"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="prev-btn" onclick="changeQuestion(-1)">Previous</button>
+            <span id="question-number" style="align-self: center; font-weight: bold; color: #6b7280;"></span>
+            <button class="btn" id="next-btn" onclick="changeQuestion(1)">Next</button>
+        </div>
+    </div>
+
 </div>
 
 <script>
-const fullQuestionPool = [
+    // --- DATABASE ---
+    const fullQuestionPool = [
     {
         q: "A 10-month-old boy is poorly gaining weight. His mother complains about his constant persistent cough. Sputum is thick and viscous. The boy had pneumonia three times. His sweat chloride levels are over 80 mEq/L. What is the most likely diagnosis?",
         o: ["Mucoviscidosis (cystic fibrosis)", "Bronchial asthma", "Congenital lung abnormality", "A foreign body in the bronchi", "Chronic bronchitis"],
@@ -349,206 +502,4 @@ const fullQuestionPool = [
         a: 3
     },
     {
-        q: "A 25-year-old man was hospitalized with complaints of pain in his lower abdomen and right lumbar area that appeared one hour ago. Patient's general state is moderately severe. Body temperature - 38.2°C, heart rate - 102/min. The tongue is dry. The abdomen is painful on deep palpation in the right iliac area and in the Petit triangle. Aure-Rozanov and Gabay signs are positive. Make the provisional diagnosis:",
-        o: ["Intestinal obstruction", "Acute cholecystitis", "Acute appendicitis", "Right-sided renal colic", "Cecal tumor"],
-        a: 2
-    },
-    {
-        q: "A 30-year-old man came to the family physician. 2 months ago he underwent a surgery for open fracture of the humerus. On examination the patient's condition is satisfactory; in the area of the postoperative wound there is a fistula that discharges a small amount of pus; the area itself is red; fluctuation is detected. X-ray shows destruction of the humerus with sequestra. What complication did the patient develop during the postoperative period?",
-        o: ["Posttraumatic osteomyelitis", "Posttraumatic phlegmon", "Hematogenous osteomyelitis", "Wound suppuration", "Suture sinus"],
-        a: 0
-    },
-    {
-        q: "The microclimate of industrial premises can be characterized by the following parameters: average air temperature - +35°C, radiant temperature - +30°C, relative air humidity - 50%, air flow velocity - 0.01 m/s. Name the main type of heat transfer that takes place in such microclimatic conditions.",
-        o: ["Radiation", "Convection", "Radiation (duplicate option in source, assuming distinct)", "Evaporation", "Conduction"],
-        a: 3
-    },
-    {
-        q: "What medical professional can be involved in the examination of a dead body at the scene of an accident by the investigator, if a forensic medical expert is unavailable?",
-        o: ["Only an anatomical pathologist", "Only a surgeon or an anesthesiologist", "Any doctor", "Only a therapist or an anatomical pathologist", "Only a family doctor or an anatomical pathologist"],
-        a: 2
-    },
-    {
-        q: "The history of a 70-year-old patient states that the disease onset was approximately six months ago. According to her relatives, her memory of current events was sharply deteriorating, in particular, she was forgetting the way home when returning from the store and started experiencing difficulties while performing her usual daily activities. The memory of past events was retained. Signs of semantic and amnestic aphasia were observed. Echolalia is periodically noted. The patient is in a low mood and has slight anxiety. She has a history of craniocerebral trauma and had diabetes mellitus for approximately 15 years. What is the most likely diagnosis?",
-        o: ["Vascular dementia", "Involutional depression", "Encephalitis", "Brain tumor", "Alzheimer's disease"],
-        a: 4
-    },
-    {
-        q: "A 65-year-old man complains of cough attacks that occur when he eats liquid foods. Three months ago he was diagnosed with a carcinoma in the upper third of the esophagus. He underwent radiation therapy. What complication developed in this man?",
-        o: ["Perforation of a gastric cardia ulcer", "Lung abscess rupture into the pleural cavity", "Spontaneous pneumothorax", "Tracheal stenosis", "Tracheoesophageal fistula"],
-        a: 4
-    },
-    {
-        q: "A planner designs a heating system for a pre-school educational establishment. The highest air temperature should be in the following room:",
-        o: ["Common room of a preschool group", "Game room of a nursery group", "Bedroom of a nursery group", "Bedroom of a preschool group", "Gymnasium"],
-        a: 1
-    },
-    {
-        q: "A 45-year-old woman complains of general weakness, dyspnea, and dizziness. Within one year her hair became gray, her nails started peeling, and she developed gustatory disorders. For the last 5 years she has been registered for regular check-ups with a gynecologist for uterine fibromyoma. Her blood test shows the following: erythrocytes 3.0x10^12/L, Hb-76 g/L, color index - 0.7, reticulocytes - 0.7%, platelets 160x10^9/L, leukocytes 5.0x10^9/L, eosinophils - 2%, band neutrophils - 3%, segmented neutrophils - 63%, lymphocytes - 28%, monocytes 4%, aniso- and microcytosis, ESR - 30 mm/hour. What type of anemia can be suspected?",
-        o: ["Hypoplastic anemia", "B12-deficiency anemia", "Iron-deficiency anemia", "Minkowski-Chauffard syndrome", "Autoimmune hemolytic anemia"],
-        a: 2
-    },
-    {
-        q: "A woman has focal encephalitis in the anamnesis. Her spatial orientation is not disrupted. She has a sensation, as if 'everything seems surreal: buildings are small, round or distorted; trees are upside down; people are very tall with thin limbs'. Determine the psychopathologic syndrome:",
-        o: ["Derealization", "Oneiric", "Hallucinatory", "Depersonalization", "Cenestopathic"],
-        a: 0
-    },
-    {
-        q: "A 32-year-old woman complained of a sudden piercing headache and fell down unconscious. In an ambulance, an emergency physician noted her severe condition, sopor, and meningeal syndrome. After her hospitalization, the lumbar puncture yielded bloody cerebrospinal fluid. Her cerebrospinal fluid pressure is 260 mm H20. Make the provisional diagnosis:",
-        o: ["Meningioma", "Meningoencephalitis", "Traumatic brain injury", "Ischemic stroke", "Aneurysm rupture, subarachnoid hemorrhage"],
-        a: 4
-    },
-    {
-        q: "A 12-year-old girl became acutely ill with a fever of 38.5°C and a rash appearing on her skin. Objectively, her condition is of moderate severity, she has hepatosplenomegaly, fine punctate rash and maculopapular rash on the flexor surfaces of her limbs, lateral surfaces of the trunk, and lower abdomen. Demarkated bluish-pink coloring is observed on her hands and feet. What is the most likely diagnosis?",
-        o: ["Scarlet fever", "Pseudotuberculosis", "Measles", "Chickenpox", "Infectious mononucleosis"],
-        a: 1
-    },
-    {
-        q: "A 4-month-old boy has been undergoing in-patient treatment for pneumocystic pneumonia for 4 weeks. The diagnosis has been made based on clinical signs, typical X-ray presentation, presence of severe hypoxemia, positive dynamics caused by intravenous introduction of Biseptol (Co-trimoxazole). Anamnesis states that enzyme-linked immuno sorbent assay (ELISA) detected antibodies to HIV in the umbilical blood. Polymerase chain reaction (PCR) was performed on the child at the ages of 1 month and 3 months, and proviral DNA was detected in the child's blood. Viral load and number of CD4+-lymphocytes was not measured. Make the diagnosis:",
-        o: ["HIV/AIDS", "Adenovirus infection", "Pneumonia", "Infectious mononucleosis", "Tuberculosis"],
-        a: 0
-    },
-    {
-        
-
-let state = {
-  today: new Date().toDateString(),
-  selected: [],
-  index: 0,
-  correct: 0,
-  total: 5,
-  done: false,
-  stats: {streak:0,scores:[]}
-};
-
-function loadStats(){
-  const raw = localStorage.getItem('medQuizStats');
-  if(raw){
-    state.stats = JSON.parse(raw);
-  }
-}
-function saveStats(){
-  localStorage.setItem('medQuizStats', JSON.stringify(state.stats));
-}
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-}
-function startQuiz(){
-  const sel = document.getElementById('qCount');
-  state.total = Math.min(parseInt(sel.value,10), allQuestions.length);
-  state.index = 0;
-  state.correct = 0;
-  state.done = false;
-  state.selected = allQuestions.slice();
-  shuffle(state.selected);
-  state.selected = state.selected.slice(0,state.total);
-  document.getElementById('progressFill').style.width = '0%';
-  showQuestion();
-}
-function showQuestion(){
-  const c = document.getElementById('content');
-  if(state.index>=state.total){
-    finishQuiz();
-    return;
-  }
-  const q = state.selected[state.index];
-  const progressPct = Math.round(state.index/state.total*100);
-  document.getElementById('progressFill').style.width = progressPct+'%';
-  let html = `
-    <div class="question-box">
-      <div class="q-header">Question ${state.index+1} of ${state.total}</div>
-      <div class="q-text">${q.q}</div>
-      <div class="options">
-  `;
-  q.o.forEach((opt,i)=>{
-    html += `
-      <div class="option" onclick="selectOption(${i})" id="opt${i}">
-        <span><strong>${String.fromCharCode(65+i)}.</strong></span>
-        <span>${opt}</span>
-      </div>`;
-  });
-  html += `
-      </div>
-      <div class="feedback" id="feedback"></div>
-      <button class="btn-main" id="btnNext" onclick="submitAnswer()" disabled>Submit</button>
-      <button class="btn-secondary" onclick="startQuiz()">Retake (new set)</button>
-    </div>`;
-  c.innerHTML = html;
-}
-let currentChoice = null;
-function selectOption(i){
-  currentChoice = i;
-  document.querySelectorAll('.option').forEach((el,idx)=>{
-    el.classList.toggle('selected', idx===i);
-  });
-  document.getElementById('btnNext').disabled = false;
-}
-function submitAnswer(){
-  if(currentChoice==null) return;
-  const q = state.selected[state.index];
-  const fb = document.getElementById('feedback');
-  const isCorrect = currentChoice===q.c;
-  if(isCorrect) state.correct++;
-  document.querySelectorAll('.option').forEach((el,idx)=>{
-    el.classList.remove('selected');
-    if(idx===q.c) el.classList.add('correct');
-    else if(idx===currentChoice) el.classList.add('wrong');
-  });
-  fb.className = 'feedback show '+(isCorrect?'ok':'bad');
-  fb.innerHTML = isCorrect ? '✅ Correct' :
-    '❌ Incorrect. Correct answer: <strong>'+q.o[q.c]+'</strong>';
-  document.getElementById('btnNext').textContent =
-    state.index===state.total-1 ? 'See Results' : 'Next Question';
-  document.getElementById('btnNext').onclick = ()=>{
-    currentChoice = null;
-    state.index++;
-    showQuestion();
-  };
-}
-function finishQuiz(){
-  state.done = true;
-  const pct = Math.round(state.correct/state.total*100);
-  const c = document.getElementById('content');
-  c.className = 'menu';
-  c.innerHTML = `
-    <h2 style="color:#667eea;margin-top:10px">Session Complete</h2>
-    <p style="font-size:26px;font-weight:bold;color:#111;margin:10px 0">
-      ${state.correct}/${state.total} (${pct}%)
-    </p>
-    <p>Retake as many times as you want or change question count.</p>
-    <button class="btn-main" onclick="startQuiz()">Retake Quiz</button>
-  `;
-  updateStats(pct);
-}
-function updateStats(pct){
-  loadStats();
-  state.stats.scores.push({date:state.today,score:pct});
-  // simple streak: full‑score days in a row
-  if(pct===100) state.stats.streak = (state.stats.streak||0)+1;
-  else state.stats.streak = 0;
-  saveStats();
-  renderStats();
-}
-function renderStats(){
-  loadStats();
-  const scores = state.stats.scores;
-  const todayEntry = scores.length ? scores[scores.length-1] : null;
-  document.getElementById('statToday').textContent =
-    todayEntry ? todayEntry.score+'%' : '-';
-  document.getElementById('statStreak').textContent =
-    state.stats.streak || 0;
-  if(scores.length){
-    const avg = Math.round(scores.reduce((s,x)=>s+x.score,0)/scores.length);
-    document.getElementById('statAvg').textContent = avg+'%';
-  } else {
-    document.getElementById('statAvg').textContent = '-';
-  }
-}
-loadStats();
-renderStats();
-</script>
-</body>
-</html>
+        q: "A 25-year-old man was hospitalized with complaints of pain in his lower abdomen and right lumbar area that appeared one hour ago. Patient's general state is moderately severe. Body temperature - 38.2°C, heart rate - 102/min. The tongue is dry. The abdomen is painful on deep palpation in the right iliac area and in the Petit triangle. Aure-Rozanov and Gabay signs are positive. Make the provisional diagno
