@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Board Tutor (250+ Qs)</title>
+    <title>Medical Board Tutor (Pro)</title>
     <style>
         :root { --primary: #2563eb; --background: #f8fafc; --surface: #ffffff; --text: #0f172a; --ai-color: #7c3aed; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--background); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
@@ -33,8 +33,8 @@
 <div class="app-container">
     <div id="setup-view" style="text-align:center; padding: 2rem 0;">
         <h1 style="color: var(--primary); margin-bottom: 10px;">Medical Board Tutor</h1>
+        <p style="color: #64748b;">AI Model: <strong style="color: #7c3aed;">Gemini 1.5 Pro</strong></p>
         <p style="color: #64748b;">Database: <strong>250+ Questions</strong></p>
-        <p style="color: #64748b;">AI Status: <strong style="color: #16a34a;">CONNECTED</strong></p>
         <button class="primary-btn" onclick="startNewQuiz()">Start Session</button>
     </div>
 
@@ -45,7 +45,7 @@
         </div>
         <p id="q-text" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;"></p>
         <div id="options-container"></div>
-        <button class="ai-btn" onclick="askAI()"><span>✨ Explain This</span></button>
+        <button class="ai-btn" onclick="askAI()"><span>✨ Explain with Pro AI</span></button>
         <div id="ai-response-box"></div>
         <div class="nav-container">
             <button class="nav-btn" id="prev-btn" onclick="nav(-1)">Previous</button>
@@ -58,9 +58,11 @@
 </div>
 
 <script>
-    // --- UPDATED KEY HERE ---
+    // --- UPDATED KEY & MODEL CONFIG ---
     const API_KEY = "AIzaSyDOXuMkT0qUpTyAS1OLZbsV-HZdALzNauk"; 
-    
+    // We are now using the PRO model
+    const MODEL_NAME = "gemini-1.5-pro";
+
     // --- 250 QUESTION DATABASE ---
     const db = [
         // BATCH 1: GENERAL & KROK
@@ -368,7 +370,8 @@
         box.innerHTML = "<span class='dots'><strong>🤖 AI is analyzing</strong></span>";
         const prompt = `Medical Board Tutor. Q: "${q.q}" Correct: "${q.o[q.a]}" Options: ${JSON.stringify(q.o)} Task: 1. Explain why correct. 2. Explain why others wrong. Keep it concise.`;
         try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // Updated Endpoint for PRO Model
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
             const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
             const data = await response.json();
             if(data.error) { box.innerHTML = `<span style="color:red">Error: ${data.error.message}</span>`; } else {
