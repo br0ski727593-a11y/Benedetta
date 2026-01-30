@@ -47,13 +47,17 @@
         <div id="options-container"></div>
         <button class="ai-btn" onclick="askAI()"><span>✨ Explain This</span></button>
         <div id="ai-response-box"></div>
-        <div class="nav-container">
+                <div class="nav-container" style="display: flex; gap: 10px; justify-content: space-between;">
+            
             <button class="nav-btn" id="prev-btn" onclick="nav(-1)">Previous</button>
+
+            <button class="nav-btn" onclick="smartSearch()" style="color: #0ea5e9; border-color: #0ea5e9; flex-grow: 2;">
+                🚀 Ask Perplexity
+            </button>
+
             <button class="nav-btn" id="next-btn" onclick="nav(1)">Next</button>
         </div>
-        <div style="text-align: center; margin-top: 20px;">
-             <button onclick="exitToMenu()" style="background: none; text-decoration: underline; color: #94a3b8; font-weight: normal; font-size: 0.9rem;">Exit</button>
-        </div>
+
     </div>
 </div>
 
