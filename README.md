@@ -62,7 +62,7 @@
 
 <script>
     // --- API KEY PRE-LOADED ---
-    const API_KEY = "AIzaSyDqepSoZET91rXIhfkJ6lxmhxEq_AenXJQ"; 
+    const API_KEY = "AIzaSyAwvv2MjKEYA8VG8UEvVrv3zi7AiNARaxU"; 
 
     // --- DATABASE ---
     const db = [
