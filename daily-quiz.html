@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Medical Tutor</title>
+    <title>Medical Board Tutor</title>
     <style>
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
             --surface: #ffffff;
-            --background: #f1f5f9;
+            --background: #f8fafc;
             --text: #0f172a;
-            --text-secondary: #475569;
+            --text-secondary: #64748b;
             --success: #10b981;
             --error: #ef4444;
             --border: #e2e8f0;
-            --ai-color: #7c3aed; /* Purple for AI */
+            --ai-color: #7c3aed;
         }
 
         body {
@@ -34,88 +34,115 @@
             background: var(--surface);
             width: 100%;
             max-width: 800px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
 
         /* Setup Screen */
-        .setup-screen { text-align: center; padding: 1rem 0; }
-        .input-group { margin-bottom: 1.5rem; text-align: left; }
-        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;}
-        
-        input[type="text"], input[type="password"], select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            box-sizing: border-box;
+        .setup-screen { text-align: center; padding: 2rem 0; }
+        .setup-screen h1 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--text); }
+        .setup-screen p { color: var(--text-secondary); margin-bottom: 2rem; }
+
+        .select-wrapper {
+            max-width: 300px;
+            margin: 0 auto 2rem auto;
         }
+        
+        select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            background-color: #fff;
+            cursor: pointer;
+            outline: none;
+        }
+        select:focus { border-color: var(--primary); }
 
         /* Quiz Interface */
         .header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: flex-end;
+            padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);
         }
         
-        .progress-bar-bg { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 1.5rem; }
-        .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+        .progress-bar-bg { 
+            width: 100%; height: 8px; background: #f1f5f9; 
+            border-radius: 4px; overflow: hidden; margin-top: 1rem; 
+        }
+        .progress-bar-fill { 
+            height: 100%; background: var(--primary); 
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
 
-        .question-text { font-size: 1.2rem; font-weight: 500; margin-bottom: 1.5rem; }
+        .question-text { 
+            font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0; line-height: 1.5;
+        }
 
         .options-grid { display: flex; flex-direction: column; gap: 0.8rem; }
 
         .option-btn {
-            background: #fff; border: 2px solid var(--border); padding: 1rem;
-            border-radius: 10px; text-align: left; cursor: pointer; font-size: 1rem;
-            transition: all 0.2s;
+            background: #fff; border: 2px solid var(--border); padding: 1.2rem;
+            border-radius: 12px; text-align: left; cursor: pointer; font-size: 1rem;
+            transition: all 0.2s ease; position: relative;
         }
-        .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #eff6ff; }
+        .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #f0f9ff; }
+        
         .option-btn.selected { border-color: var(--primary); background: #eff6ff; font-weight: 600; }
-        .option-btn.correct { border-color: var(--success); background: #ecfdf5; color: #064e3b; }
-        .option-btn.wrong { border-color: var(--error); background: #fef2f2; color: #7f1d1d; }
+        .option-btn.correct { border-color: var(--success); background: #f0fdf4; color: #166534; }
+        .option-btn.wrong { border-color: var(--error); background: #fef2f2; color: #991b1b; }
 
-        /* AI Section */
+        /* AI Tutor Section */
         .ai-section {
-            margin-top: 1.5rem;
-            background: #f5f3ff; /* Light purple tint */
+            margin-top: 2rem;
+            background: #f5f3ff;
             border: 1px solid #ddd6fe;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 1.5rem;
-            display: none; /* Hidden by default */
+            display: none;
+            animation: fadeIn 0.3s ease;
         }
-        .ai-header { font-weight: 700; color: var(--ai-color); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
-        .ai-content { font-size: 0.95rem; white-space: pre-wrap; }
-
+        
+        .ai-header { 
+            font-weight: 800; color: var(--ai-color); margin-bottom: 1rem; 
+            display: flex; align-items: center; gap: 10px; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;
+        }
+        .ai-content { font-size: 1rem; line-height: 1.7; color: #4c1d95; }
+        
         /* Buttons */
         .primary-btn {
             background-color: var(--primary); color: white; border: none;
-            padding: 1rem 2rem; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;
+            padding: 1rem 2.5rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4); }
+
         .nav-btn {
             background: white; border: 2px solid var(--border); padding: 0.8rem 1.5rem;
-            border-radius: 8px; font-weight: 600; cursor: pointer;
+            border-radius: 10px; font-weight: 600; cursor: pointer; color: var(--text-secondary);
         }
+        .nav-btn:hover:not(:disabled) { border-color: var(--text-secondary); color: var(--text); }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
         .ai-btn {
-            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
             color: white; border: none; padding: 0.8rem 1.5rem;
-            border-radius: 8px; font-weight: 600; cursor: pointer;
+            border-radius: 10px; font-weight: 700; cursor: pointer;
             display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
-            transition: transform 0.1s;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+            transition: all 0.2s;
         }
-        .ai-btn:hover { transform: translateY(-1px); }
-        .ai-btn:active { transform: translateY(1px); }
+        .ai-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4); }
 
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; }
         .hidden { display: none !important; }
         
-        /* Markdown rendering helper */
-        strong { font-weight: 700; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -124,47 +151,42 @@
     
     <div id="setup-view" class="setup-screen">
         <h1>Medical Board Tutor</h1>
-        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
-            Database: <span id="total-count" style="font-weight:700">0</span> questions
-        </p>
+        <p>Ready to study? Choose your session length below.</p>
 
-        <div class="input-group">
-            <label>1. Study Mode</label>
+        <div class="select-wrapper">
             <select id="quiz-length">
-                <option value="10">10 Questions</option>
-                <option value="25">25 Questions</option>
-                <option value="50">50 Questions</option>
-                <option value="all">All Questions</option>
+                <option value="10">Quick Review (10 Questions)</option>
+                <option value="25">Standard Session (25 Questions)</option>
+                <option value="50">Deep Dive (50 Questions)</option>
+                <option value="all">Full Exam Simulation</option>
             </select>
         </div>
 
-        <div class="input-group">
-            <label>2. AI Tutor API Key (Optional)</label>
-            <input type="password" id="api-key" placeholder="Paste Google Gemini API Key here...">
-            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
-                Required for the "Explain" button. <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--primary);">Get a free key here</a>.
-                (Stored locally on your browser).
-            </div>
+        <button class="primary-btn" onclick="startNewQuiz()">Start Studying</button>
+        
+        <div style="margin-top: 2rem;">
+            <button id="resume-btn" class="nav-btn hidden" style="border:none; background:none; text-decoration:underline;" onclick="resumeQuiz()">
+                Resume previous session
+            </button>
         </div>
-
-        <button class="primary-btn" onclick="startNewQuiz()">Start Session</button>
-        <button id="resume-btn" class="nav-btn hidden" style="margin-top: 10px; width: 100%; border:none; background:none; text-decoration:underline;" onclick="resumeQuiz()">Resume previous</button>
+        
+        <p style="font-size: 0.8rem; margin-top: 3rem; color: #cbd5e1;">Database size: <span id="total-count">0</span> questions</p>
     </div>
 
     <div id="quiz-view" class="hidden">
         <div class="header">
             <div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Progress</div>
-                <div id="progress-text" style="font-weight: 700;">1 / 10</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Question</div>
+                <div id="progress-text" style="font-weight: 800; font-size: 1.2rem;">1 / 10</div>
             </div>
             <div style="text-align: right;">
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Score</div>
-                <div id="score-text" style="font-weight: 700; color: var(--primary);">0%</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Score</div>
+                <div id="score-text" style="font-weight: 800; font-size: 1.2rem; color: var(--primary);">0%</div>
             </div>
         </div>
 
-        <div style="margin-top: 1rem;">
-            <div class="progress-bar-bg"><div id="progress-fill" class="progress-bar-fill" style="width: 0%"></div></div>
+        <div class="progress-bar-bg">
+            <div id="progress-fill" class="progress-bar-fill" style="width: 0%"></div>
         </div>
 
         <div id="quiz-content">
@@ -172,28 +194,37 @@
             <div class="options-grid" id="options-container"></div>
         </div>
 
-        <div class="controls" style="justify-content: center; margin: 1.5rem 0;">
+        <div class="controls" style="justify-content: center; margin-top: 2rem;">
             <button class="ai-btn" onclick="askAI()" id="ai-trigger-btn">
-                <span>✨ Explain with AI</span>
+                <span>✨ Ask AI Tutor</span>
             </button>
         </div>
 
         <div id="ai-response-box" class="ai-section">
-            <div class="ai-header">🤖 AI Tutor Analysis</div>
-            <div id="ai-content" class="ai-content">Loading explanation...</div>
+            <div class="ai-header">
+                <span style="font-size: 1.2rem;">🧬</span> AI Explanation
+            </div>
+            <div id="ai-content" class="ai-content"></div>
         </div>
 
         <div class="controls">
             <button class="nav-btn" id="prev-btn" onclick="nav(-1)">Previous</button>
-            <button class="nav-btn" style="border:none; color:var(--text-secondary)" onclick="exitToMenu()">End</button>
-            <button class="primary-btn" id="next-btn" style="width: auto;" onclick="nav(1)">Next</button>
+            <button class="nav-btn" style="border:none;" onclick="exitToMenu()">Menu</button>
+            <button class="primary-btn" id="next-btn" style="width: auto; padding: 0.8rem 2rem;" onclick="nav(1)">Next</button>
         </div>
     </div>
 
 </div>
 
 <script>
-    // --- DATABASE (First 30 Samples included) ---
+    // ==========================================
+    // CONFIGURATION: PASTE API KEY HERE
+    // ==========================================
+    const YOUR_API_KEY = ""; // <--- PASTE KEY BETWEEN THESE QUOTES
+    // Example: const YOUR_API_KEY = "AIzaSyD8...";
+    // ==========================================
+
+    // --- DATABASE (First 30 Questions - Add more as needed) ---
     const db = [
         {
             q: "A 10-month-old boy is poorly gaining weight. His mother complains about his constant persistent cough. Sputum is thick and viscous. The boy had pneumonia three times. His sweat chloride levels are over 80 mEq/L. What is the most likely diagnosis?",
@@ -351,54 +382,35 @@
     let activeQuestions = [];
     let userAnswers = {};
     let currentIndex = 0;
-    let apiKey = "";
 
-    // --- DOM REFERENCES ---
+    // --- DOM REFS ---
     const setupView = document.getElementById('setup-view');
     const quizView = document.getElementById('quiz-view');
     const totalCountEl = document.getElementById('total-count');
     const resumeBtn = document.getElementById('resume-btn');
     const quizLengthSelect = document.getElementById('quiz-length');
-    const apiKeyInput = document.getElementById('api-key');
     const aiBox = document.getElementById('ai-response-box');
     const aiContent = document.getElementById('ai-content');
 
-    // --- INIT ---
     function init() {
         totalCountEl.textContent = db.length;
         Array.from(quizLengthSelect.options).forEach(opt => {
             if (opt.value !== 'all' && parseInt(opt.value) > db.length) opt.disabled = true;
         });
-
-        // Load API Key
-        const savedKey = localStorage.getItem('geminiApiKey');
-        if(savedKey) apiKeyInput.value = savedKey;
-
-        // Load Session
         if(localStorage.getItem('medQuizSession')) resumeBtn.classList.remove('hidden');
     }
 
-    // --- CORE QUIZ FUNCTIONS ---
     function startNewQuiz() {
-        // Save API Key
-        apiKey = apiKeyInput.value.trim();
-        if(apiKey) localStorage.setItem('geminiApiKey', apiKey);
-
         const val = quizLengthSelect.value;
-        let count = (val === 'all') ? db.length : parseInt(val);
-        
+        const count = (val === 'all') ? db.length : parseInt(val);
         activeQuestions = [...db].sort(() => 0.5 - Math.random()).slice(0, count);
         userAnswers = {};
         currentIndex = 0;
-        
         saveSession();
         showQuiz();
     }
 
     function resumeQuiz() {
-        // Load Key
-        apiKey = localStorage.getItem('geminiApiKey') || "";
-        
         const data = JSON.parse(localStorage.getItem('medQuizSession'));
         if(data) {
             activeQuestions = data.questions;
@@ -415,7 +427,7 @@
     }
 
     function exitToMenu() {
-        if(confirm("Exit?")) {
+        if(confirm("Return to main menu? Progress will be saved.")) {
             quizView.classList.add('hidden');
             setupView.classList.remove('hidden');
             init();
@@ -432,8 +444,7 @@
         const next = currentIndex + dir;
         if(next >= 0 && next < activeQuestions.length) {
             currentIndex = next;
-            // Hide AI box when changing questions
-            aiBox.style.display = 'none';
+            aiBox.style.display = 'none'; // Hide AI on nav
             saveSession();
             renderQuestion();
         }
@@ -451,9 +462,9 @@
         const isAnswered = userAnswer !== undefined;
 
         document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
-        document.getElementById('progress-fill').style.width = `${((currentIndex + 1) / activeQuestions.length) * 100}%`;
+        const pct = ((currentIndex + 1) / activeQuestions.length) * 100;
+        document.getElementById('progress-fill').style.width = `${pct}%`;
 
-        // Score
         let correct = 0, answered = 0;
         activeQuestions.forEach((q, i) => {
             if(userAnswers[i] !== undefined) {
@@ -487,38 +498,36 @@
         document.getElementById('prev-btn').disabled = (currentIndex === 0);
         document.getElementById('next-btn').disabled = (currentIndex === activeQuestions.length - 1);
         
-        // Hide AI box on render
         if(aiBox.style.display !== 'block') aiBox.style.display = 'none';
     }
 
     // --- AI LOGIC ---
     async function askAI() {
-        if(!apiKey) {
-            alert("Please enter a Google Gemini API Key in the setup screen to use this feature.");
+        if(!YOUR_API_KEY) {
+            alert("No API Key found. Please open the HTML file in a text editor and paste your Google Gemini Key into the code where it says 'const YOUR_API_KEY'.");
             return;
         }
 
         const qData = activeQuestions[currentIndex];
         const correctText = qData.o[qData.a];
         
-        // Show box with loading
         aiBox.style.display = 'block';
-        aiContent.innerHTML = "Thinking... Analyzing medical context...";
+        aiContent.innerHTML = "<em>Reading question details...</em>";
         
         const prompt = `
-            You are an expert medical board exam tutor.
+            You are a helpful medical tutor.
             Question: "${qData.q}"
             Options: ${JSON.stringify(qData.o)}
             Correct Answer: "${correctText}"
             
-            Task:
-            1. Explain concisely why the correct answer is right.
-            2. Briefly explain why the other options are wrong (differential diagnosis).
-            3. Keep it simple and educational. Format with bullet points.
+            Please provide a friendly explanation.
+            1. Why is the correct answer right? (Focus on key symptoms).
+            2. Why are the other options wrong?
+            Keep it concise and easy to read.
         `;
 
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${YOUR_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -529,18 +538,18 @@
             if(data.error) {
                 aiContent.innerHTML = `<span style="color:red">Error: ${data.error.message}</span>`;
             } else {
-                // Basic Markdown formatting cleanup
                 let text = data.candidates[0].content.parts[0].text;
                 text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
                 text = text.replace(/\n/g, '<br>'); // Newlines
                 aiContent.innerHTML = text;
             }
         } catch (e) {
-            aiContent.innerHTML = `<span style="color:red">Connection Error. Please check your internet or API key.</span>`;
+            aiContent.innerHTML = `<span style="color:red">Connection failed. Check internet.</span>`;
         }
     }
 
     init();
+
 </script>
 </body>
 </html>
