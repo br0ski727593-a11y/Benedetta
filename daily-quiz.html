@@ -3,176 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Board Quiz App</title>
+    <title>AI Medical Tutor</title>
     <style>
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
             --surface: #ffffff;
-            --background: #f3f4f6;
-            --text: #1f2937;
+            --background: #f1f5f9;
+            --text: #0f172a;
+            --text-secondary: #475569;
             --success: #10b981;
             --error: #ef4444;
-            --border: #e5e7eb;
+            --border: #e2e8f0;
+            --ai-color: #7c3aed; /* Purple for AI */
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--background);
             color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
         }
 
         .app-container {
             background: var(--surface);
             width: 100%;
-            max-width: 700px;
-            border-radius: 12px;
+            max-width: 800px;
+            border-radius: 16px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             padding: 2rem;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            margin-top: 2rem;
         }
 
         /* Setup Screen */
-        .setup-screen {
-            text-align: center;
-            padding: 1rem 0;
-        }
-
-        .input-group {
-            margin: 2rem 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        select, input[type="number"] {
+        .setup-screen { text-align: center; padding: 1rem 0; }
+        .input-group { margin-bottom: 1.5rem; text-align: left; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;}
+        
+        input[type="text"], input[type="password"], select {
+            width: 100%;
             padding: 0.8rem;
-            font-size: 1.1rem;
             border: 2px solid var(--border);
             border-radius: 8px;
-            width: 200px;
-            text-align: center;
-            background-color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
         }
 
-        /* Quiz UI */
+        /* Quiz Interface */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 1rem; border-bottom: 1px solid var(--border);
         }
+        
+        .progress-bar-bg { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 1.5rem; }
+        .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
 
-        .progress-container {
-            width: 100%;
-            background-color: var(--border);
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
+        .question-text { font-size: 1.2rem; font-weight: 500; margin-bottom: 1.5rem; }
 
-        .progress-bar {
-            height: 100%;
-            background-color: var(--primary);
-            transition: width 0.3s ease;
-        }
-
-        .question-text {
-            font-size: 1.15rem;
-            line-height: 1.6;
-            font-weight: 500;
-        }
-
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
+        .options-grid { display: flex; flex-direction: column; gap: 0.8rem; }
 
         .option-btn {
-            background: #f9fafb;
-            border: 2px solid var(--border);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: left;
-            cursor: pointer;
+            background: #fff; border: 2px solid var(--border); padding: 1rem;
+            border-radius: 10px; text-align: left; cursor: pointer; font-size: 1rem;
             transition: all 0.2s;
-            font-size: 1rem;
-            position: relative;
         }
+        .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #eff6ff; }
+        .option-btn.selected { border-color: var(--primary); background: #eff6ff; font-weight: 600; }
+        .option-btn.correct { border-color: var(--success); background: #ecfdf5; color: #064e3b; }
+        .option-btn.wrong { border-color: var(--error); background: #fef2f2; color: #7f1d1d; }
 
-        .option-btn:hover:not(:disabled) {
-            border-color: var(--primary);
-            background: #eff6ff;
+        /* AI Section */
+        .ai-section {
+            margin-top: 1.5rem;
+            background: #f5f3ff; /* Light purple tint */
+            border: 1px solid #ddd6fe;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: none; /* Hidden by default */
         }
-
-        /* Review Mode Colors */
-        .option-btn.correct {
-            border-color: var(--success);
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .option-btn.wrong {
-            border-color: var(--error);
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .option-btn.selected {
-            border-color: var(--primary);
-            background: #eff6ff;
-            font-weight: 600;
-        }
+        .ai-header { font-weight: 700; color: var(--ai-color); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+        .ai-content { font-size: 0.95rem; white-space: pre-wrap; }
 
         /* Buttons */
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: background 0.2s;
+        .primary-btn {
+            background-color: var(--primary); color: white; border: none;
+            padding: 1rem 2rem; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;
         }
-
-        .btn:hover {
-            background-color: var(--primary-hover);
+        .nav-btn {
+            background: white; border: 2px solid var(--border); padding: 0.8rem 1.5rem;
+            border-radius: 8px; font-weight: 600; cursor: pointer;
         }
-
-        .btn:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
+        .ai-btn {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white; border: none; padding: 0.8rem 1.5rem;
+            border-radius: 8px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+            transition: transform 0.1s;
         }
+        .ai-btn:hover { transform: translateY(-1px); }
+        .ai-btn:active { transform: translateY(1px); }
 
-        .btn-outline {
-            background-color: transparent;
-            color: #6b7280;
-            border: none;
-            cursor: pointer;
-            text-decoration: underline;
-            font-size: 0.9rem;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-        }
-
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; }
         .hidden { display: none !important; }
+        
+        /* Markdown rendering helper */
+        strong { font-weight: 700; }
     </style>
 </head>
 <body>
@@ -180,57 +123,78 @@
 <div class="app-container">
     
     <div id="setup-view" class="setup-screen">
-        <h1>Medical Board Quiz</h1>
-        <p>Database size: <span id="total-available" style="font-weight:bold;">0</span> questions.</p>
-        
+        <h1>Medical Board Tutor</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+            Database: <span id="total-count" style="font-weight:700">0</span> questions
+        </p>
+
         <div class="input-group">
-            <label for="quiz-length">Select number of questions:</label>
+            <label>1. Study Mode</label>
             <select id="quiz-length">
                 <option value="10">10 Questions</option>
                 <option value="25">25 Questions</option>
                 <option value="50">50 Questions</option>
-                <option value="100">100 Questions</option>
-                <option value="all">All Available</option>
+                <option value="all">All Questions</option>
             </select>
         </div>
 
-        <button class="btn" onclick="startNewQuiz()">Start New Quiz</button>
-        
-        <div style="margin-top: 20px;">
-            <button class="btn-outline hidden" id="resume-btn" onclick="resumeQuiz()">Resume Previous Session</button>
+        <div class="input-group">
+            <label>2. AI Tutor API Key (Optional)</label>
+            <input type="password" id="api-key" placeholder="Paste Google Gemini API Key here...">
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
+                Required for the "Explain" button. <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--primary);">Get a free key here</a>.
+                (Stored locally on your browser).
+            </div>
         </div>
+
+        <button class="primary-btn" onclick="startNewQuiz()">Start Session</button>
+        <button id="resume-btn" class="nav-btn hidden" style="margin-top: 10px; width: 100%; border:none; background:none; text-decoration:underline;" onclick="resumeQuiz()">Resume previous</button>
     </div>
 
     <div id="quiz-view" class="hidden">
         <div class="header">
             <div>
-                <h3 style="margin:0;">Quiz In Progress</h3>
-                <div id="score-display" style="font-size: 0.9rem; color: #6b7280;">Score: 0/0</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Progress</div>
+                <div id="progress-text" style="font-weight: 700;">1 / 10</div>
             </div>
-            <button class="btn-outline" onclick="exitToSetup()">Exit to Menu</button>
+            <div style="text-align: right;">
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Score</div>
+                <div id="score-text" style="font-weight: 700; color: var(--primary);">0%</div>
+            </div>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+        <div style="margin-top: 1rem;">
+            <div class="progress-bar-bg"><div id="progress-fill" class="progress-bar-fill" style="width: 0%"></div></div>
         </div>
 
         <div id="quiz-content">
-            <div class="question-text" id="question-text">Loading...</div>
+            <div class="question-text" id="q-text"></div>
             <div class="options-grid" id="options-container"></div>
         </div>
 
+        <div class="controls" style="justify-content: center; margin: 1.5rem 0;">
+            <button class="ai-btn" onclick="askAI()" id="ai-trigger-btn">
+                <span>✨ Explain with AI</span>
+            </button>
+        </div>
+
+        <div id="ai-response-box" class="ai-section">
+            <div class="ai-header">🤖 AI Tutor Analysis</div>
+            <div id="ai-content" class="ai-content">Loading explanation...</div>
+        </div>
+
         <div class="controls">
-            <button class="btn" id="prev-btn" onclick="changeQuestion(-1)">Previous</button>
-            <span id="question-number" style="align-self: center; font-weight: bold; color: #6b7280;"></span>
-            <button class="btn" id="next-btn" onclick="changeQuestion(1)">Next</button>
+            <button class="nav-btn" id="prev-btn" onclick="nav(-1)">Previous</button>
+            <button class="nav-btn" style="border:none; color:var(--text-secondary)" onclick="exitToMenu()">End</button>
+            <button class="primary-btn" id="next-btn" style="width: auto;" onclick="nav(1)">Next</button>
         </div>
     </div>
 
 </div>
 
 <script>
-    // --- QUESTION DATABASE (First 100 Questions) ---
-    const fullQuestionPool = [
+    // --- DATABASE (First 30 Samples included) ---
+    const db = [
         {
             q: "A 10-month-old boy is poorly gaining weight. His mother complains about his constant persistent cough. Sputum is thick and viscous. The boy had pneumonia three times. His sweat chloride levels are over 80 mEq/L. What is the most likely diagnosis?",
             o: ["Mucoviscidosis (cystic fibrosis)", "Bronchial asthma", "Congenital lung abnormality", "A foreign body in the bronchi", "Chronic bronchitis"],
@@ -380,429 +344,67 @@
             q: "40-year-old woman with epilepsy. After psychotrauma, seizures occur every 2-3 minutes without regaining consciousness. Pupils unresponsive. Diagnosis?",
             o: ["Increase in grand mal seizures", "Hysterical attack", "Status epilepticus", "Absence seizure", "Epileptic psychosis"],
             a: 2
-        },
-        {
-            q: "51-year-old man hit by car. Pain in pelvis. Larrey's and Gabai's signs positive. Cannot lift extended leg ('heel glued down'). Diagnosis?",
-            o: ["Fracture of superior pubic ramus", "Fractures of cotyloid cavity", "Pubic symphysis fracture", "Superior iliac spine fracture", "Ischium fracture"],
-            a: 0
-        },
-        {
-            q: "Postparturient woman, day 5. Pain in left mammary gland, fever 38.1°C. Nipple edematous/fissured. Prevention measures?",
-            o: ["Constant expression", "Feeding on demand, expression, nipple care", "Feeding through overlay", "Stop breastfeeding", "Feeding on schedule"],
-            a: 1
-        },
-        {
-            q: "18-year-old stung by bee. Dyspnea, edema of face/neck. BP 75/50. Diagnosis?",
-            o: ["Urticaria", "Quincke's edema", "Status asthmaticus", "Hypotonic crisis", "Anaphylactic shock"],
-            a: 4
-        },
-        {
-            q: "20-year-old, skin rash. Light brown spots merging. Balzer test positive. Diagnosis?",
-            o: ["Microbial eczema", "Pityriasis rosea", "Secondary syphilis", "Tinea versicolor", "Parapsoriasis"],
-            a: 3
-        },
-        {
-            q: "20-year-old woman, seasonal rhinitis/conjunctivitis (Aug-Sept). Hypersensitivity to Ambrosia. Which antibody class?",
-            o: ["IgD", "IgA", "IgG", "IgM", "IgE"],
-            a: 4
-        },
-        {
-            q: "Man with sharp retrosternal pain radiating to left arm. Lost consciousness, no pulse, dilated pupils. Diagnosis?",
-            o: ["Cerebral circulation disorder", "Coma", "Agonal state", "Clinical death", "Heart attack"],
-            a: 3
-        },
-        {
-            q: "32-year-old man, cold exposure. Fever, cough. Dull percussion under right shoulder blade, moist crackles. Leukocytes 13.2. Diagnosis?",
-            o: ["Tuberculosis", "Right-sided focal pneumonia", "Acute bronchitis", "Chronic bronchitis exacerbation", "Lung cancer"],
-            a: 1
-        },
-        {
-            q: "32-year-old woman, dyspnea, fever 39°C. Sputum: acid-fast bacteria. X-ray: miliary focal shadows throughout lungs. Diagnosis?",
-            o: ["Focal tuberculosis", "Caseous pneumonia", "Sarcoidosis", "Chronic disseminated tuberculosis", "Miliary pulmonary tuberculosis"],
-            a: 4
-        },
-        {
-            q: "45-year-old man, vomiting blood, weight loss. Esophagoscopy: cauliflower-shaped growth in abdominal esophagus. Diagnosis?",
-            o: ["Esophageal tumor", "Esophageal achalasia", "Abdominal esophagitis", "Esophageal diverticulum", "Barrett esophagus"],
-            a: 0
-        },
-        {
-            q: "16-year-old bitten by stray dog on face. Tactics for rabies prevention?",
-            o: ["Immunoglobulin + ribavirin", "Anti-rabies immunoglobulin + vaccine", "Vaccine + immunoglobulin", "Immunoglobulin + ribavirin", "Vaccine + ribavirin"],
-            a: 1
-        },
-        {
-            q: "35-year-old woman, left arm pain/weakness, pulse absent on left arm. No pulsation left carotid. Murmur right carotid. Diagnosis?",
-            o: ["Arterial thrombosis", "Neurological amyotrophy", "Dermatomyositis", "Systemic lupus erythematosus", "Obliterating aortoarteritis"],
-            a: 4
-        },
-        {
-            q: "Boy with foreign body under nail. 3 days later: sharp throbbing pain, pus, fever. Diagnosis?",
-            o: ["Erysipelas", "Paronychia", "Subungual panaritium", "Erysipeloid", "Abscess"],
-            a: 2
-        },
-        {
-            q: "3-year-old, cough/runny nose. Dyspnea. Bandbox resonance. Diffuse wet and dry wheezes. Diagnosis?",
-            o: ["Bilateral bronchopneumonia", "Acute bronchiolitis", "Bronchial asthma", "Acute obstructive bronchitis", "Stenosing laryngotracheitis"],
-            a: 3
-        },
-        {
-            q: "44-year-old woman, weakness, palpitations. Thyroid enlarged, dense, painful. T4 low, TSH high, Antibodies high. Diagnosis?",
-            o: ["Autoimmune thyroiditis", "Diffuse toxic goiter", "Subacute thyroiditis", "Diffuse euthyroid goiter", "Thyroid cancer"],
-            a: 0
-        },
-        {
-            q: "14-year-old girl, short stature, webbed neck, no puberty. Karyotype 45,X0. Diagnosis?",
-            o: ["Klinefelter syndrome", "Turner syndrome", "Edwards syndrome", "Patau syndrome", "Down syndrome"],
-            a: 1
-        },
-        {
-            q: "78-year-old woman, lumbar pain. Mobility limited. L2 vertebra tender. Ca 2.35. ESR 5. Diagnosis?",
-            o: ["Sciatica", "Multiple myeloma", "Secondary hyperparathyroidism", "Osteoporosis with fracture", "Amyloidosis"],
-            a: 3
-        },
-        {
-            q: "58-year-old man, ischemic stroke 10 days ago. Atrial fibrillation. Prevention of secondary stroke?",
-            o: ["Aspirin", "Lipid-lowering agents", "Oral anticoagulants", "Cerebral blood flow drugs", "Clopidogrel"],
-            a: 2
-        },
-        {
-            q: "Premature baby (34 wks). 4 hours old: tachypnea, seesaw respiration, expiratory murmurs. X-ray: air bronchogram, nodose-reticular pattern. Diagnosis?",
-            o: ["Meconium aspiration", "Birth injury", "Neonatal pneumonia", "Pulmonary atelectasis", "Hyaline membrane disease"],
-            a: 4
-        },
-        {
-            q: "Lighting fixtures in classrooms. Which type is most hygienically acceptable?",
-            o: ["Direct lighting", "Reflected lighting", "Combined lighting", "Semi-reflected lighting", "Scattered lighting"],
-            a: 1
-        },
-        {
-            q: "45-year-old farmer. Acute fever, pain in calf muscles, jaundice, dark urine, oliguria. Diagnosis?",
-            o: ["Leptospirosis", "Trichinosis", "Brucellosis", "Viral hepatitis", "Pseudotuberculosis"],
-            a: 0
-        },
-        {
-            q: "In newborn: cough attacks after eating, pneumonia. 1.5 months later: more pneumonia, cough when on left side. Hypotrophy. Diagnosis?",
-            o: ["Posthypoxic encephalopathy", "Tracheobronchomalacia", "Mucoviscidosis", "Hernia of esophageal opening", "Tracheoesophageal fistula"],
-            a: 4
-        },
-        {
-            q: "Study: excessive weight in ischemic heart disease among working age males (40+). Overweight men had more disease. Type of study?",
-            o: ["Case report", "Experimental study", "Case series report", "Cohort study", "Case-control study"],
-            a: 3
-        },
-        {
-            q: "29-year-old woman, infertility, irregular cycle. 160cm, 91kg, hair on face/thighs. Ovaries enlarged/dense. Diagnosis?",
-            o: ["Sclerocystic ovary syndrome", "Premenstrual syndrome", "Adrenogenital syndrome", "Chronic bilateral adnexitis", "Ovarian androblastoma"],
-            a: 0
-        },
-        {
-            q: "29-year-old: painless ulcer on lip for 3 weeks. Now edema. Ulcer 2.5cm, 'old lard' bottom, cartilage infiltrate. First test?",
-            o: ["Skin scraping for mycosis", "Smear for acantholytic cells", "Treponema pallidum test", "Eosinophil count", "Bacterial culture"],
-            a: 2
-        },
-        {
-            q: "47-year-old man, acute phlegmonous laryngitis -> decompensated stenosis. Dyspnea, cold sweat, BP low. Urgent treatment?",
-            o: ["Hyposensitization/broncholytics", "Oxygen therapy", "Dehydrating agents", "Tracheostomy", "Glucocorticoids"],
-            a: 3
-        },
-        {
-            q: "25-year-old man, pain in lower abdomen/right lumbar 1 hr ago. Temp 38.2C. Aure-Rozanov and Gabay positive. Diagnosis?",
-            o: ["Intestinal obstruction", "Acute cholecystitis", "Acute appendicitis", "Right-sided renal colic", "Cecal tumor"],
-            a: 2
-        },
-        {
-            q: "30-year-old man, 2 months post-op for humerus fracture. Fistula with pus, red area, fluctuation. X-ray: destruction/sequestra. Diagnosis?",
-            o: ["Posttraumatic osteomyelitis", "Posttraumatic phlegmon", "Hematogenous osteomyelitis", "Wound suppuration", "Suture sinus"],
-            a: 0
-        },
-        {
-            q: "Industrial microclimate: Air 35C, Radiant 30C, Humidity 50%, Air flow 0.01 m/s. Main heat transfer type?",
-            o: ["Radiation", "Convection", "Radiation", "Evaporation", "Conduction"],
-            a: 3
-        },
-        {
-            q: "Who can examine a dead body at accident scene if forensic expert is unavailable?",
-            o: ["Only pathologist", "Only surgeon/anesthesiologist", "Any doctor", "Only therapist/pathologist", "Only family doctor/pathologist"],
-            a: 2
-        },
-        {
-            q: "70-year-old woman, memory loss (current events), forgetting way home. Past memory ok. Semantic/amnestic aphasia. History: diabetes. Diagnosis?",
-            o: ["Vascular dementia", "Involutional depression", "Encephalitis", "Brain tumor", "Alzheimer's disease"],
-            a: 4
-        },
-        {
-            q: "65-year-old man, cough when eating liquid food. 3 months ago: esophageal carcinoma (upper third), radiation therapy. Complication?",
-            o: ["Perforation gastric cardia", "Lung abscess rupture", "Spontaneous pneumothorax", "Tracheal stenosis", "Tracheoesophageal fistula"],
-            a: 4
-        },
-        {
-            q: "Planner designs heating for preschool. Which room needs highest air temperature?",
-            o: ["Common room", "Game room (nursery)", "Bedroom (nursery)", "Bedroom (preschool)", "Gymnasium"],
-            a: 1
-        },
-        {
-            q: "45-year-old woman, weakness, gray hair, peeling nails. History: uterine fibromyoma. Hb 76 g/L, Color Index 0.7, Anisocytosis. Anemia type?",
-            o: ["Hypoplastic", "B12-deficiency", "Iron-deficiency", "Minkowski-Chauffard", "Autoimmune hemolytic"],
-            a: 2
-        },
-        {
-            q: "Woman with focal encephalitis history. 'Buildings are small/distorted, trees upside down, people tall'. Syndrome?",
-            o: ["Derealization", "Oneiric", "Hallucinatory", "Depersonalization", "Cenestopathic"],
-            a: 0
-        },
-        {
-            q: "32-year-old woman, sudden headache, unconscious. Sopor, meningeal syndrome. Bloody CSF, pressure 260. Diagnosis?",
-            o: ["Meningioma", "Meningoencephalitis", "Traumatic brain injury", "Ischemic stroke", "Aneurysm rupture/subarachnoid hemorrhage"],
-            a: 4
-        },
-        {
-            q: "12-year-old girl, fever 38.5C, rash. Hepatosplenomegaly. Punctate/maculopapular rash on flexor surfaces/trunk. 'Gloves/Socks' coloring. Diagnosis?",
-            o: ["Scarlet fever", "Pseudotuberculosis", "Measles", "Chickenpox", "Infectious mononucleosis"],
-            a: 1
-        },
-        {
-            q: "4-month-old boy, pneumocystic pneumonia. HIV antibodies in umbilical blood. PCR positive at 1 & 3 months. Diagnosis?",
-            o: ["HIV/AIDS", "Adenovirus", "Pneumonia", "Infectious mononucleosis", "Tuberculosis"],
-            a: 0
-        },
-        {
-            q: "27-year-old man, fatigue, heavy left subcostal. Spleen/Liver enlarged. Leukocytes 100x10^9/L, Basophils 7%, Eosinophils 5%, Juvenile 16%. Diagnosis?",
-            o: ["Hepatic cirrhosis", "Acute leukemia", "Chronic myelogenous leukemia", "Erythremia", "Chronic lymphocytic leukemia"],
-            a: 2
-        },
-        {
-            q: "35-year-old polisher. Cold blue fingertips, 'mask' face, pursed mouth, thick skin. Lung crackles. ESR 45. Diagnosis?",
-            o: ["Myxedema", "Obliterating endarteritis", "Vibration disease", "Raynaud's disease", "Systemic scleroderma"],
-            a: 4
-        },
-        {
-            q: "Woman at pig farm. Chills, fever 39.9C, leg muscle pain, nosebleeds. Face hyperemic, scleritis. Oliguria. Diagnosis?",
-            o: ["Hemorrhagic fever w/ renal syndrome", "Viral hepatitis", "Influenza", "Leptospirosis", "Yersiniosis"],
-            a: 3
-        },
-        {
-            q: "Secundipara, bloody discharge at delivery onset. Cervix 6cm, internal os obstructed by spongy tissue by 1/3. Tactics?",
-            o: ["Cesarean section", "Stimulation of labor", "Hemostatic therapy", "Termination of pregnancy", "Amniotomy"],
-            a: 4
-        },
-        {
-            q: "7-day-old girl, vomiting, hypotension, earthy skin. Enlarged clitoris, incomplete vulvar union. Hyperkalemia, hyponatremia. Diagnosis?",
-            o: ["Turner syndrome", "Hermaphroditism", "Adrenogenital (salt-wasting)", "Adrenogenital (simple-virilizing)", "Adrenogenital (hypertensive)"],
-            a: 2
-        },
-        {
-            q: "Forensic exam of baby: 3500g, 50cm. Umbilical cord moist/shiny. Lung float tests positive. Conclusion?",
-            o: ["Primary atelectasis", "Born dead", "Secondary atelectasis", "Hyaline membrane disease", "Born alive"],
-            a: 4
-        },
-        {
-            q: "17-year-old girl, 172cm/40kg. Thinks she's overweight. Strict diet, exercise, binds waist. Vomiting. Diagnosis?",
-            o: ["Anorexia", "Stress response", "Bulimia", "Depression", "Personality disorder"],
-            a: 0
-        },
-        {
-            q: "38-year-old woman, glomerulonephritis 20 yrs. Hypertension refractory to Losartan+Lercanidipine. Add what?",
-            o: ["Urapidil", "Lisinopril", "Torasemide", "Bisoprolol", "Doxazosin"],
-            a: 2
-        },
-        {
-            q: "30-year-old ate mushrooms. Nausea, anuria. Creatinine 700, Urea 32. Treatment?",
-            o: ["Hemodialysis", "Antidote therapy", "Detoxification therapy", "Diuretics", "Peritoneal dialysis"],
-            a: 0
-        },
-        {
-            q: "Man with acute fever 39.9C, headache, eye pain, body aches. 2 nosebleeds. Diagnosis?",
-            o: ["Parainfluenza", "Adenovirus", "Respiratory syncytial", "Influenza", "Enterovirus"],
-            a: 3
-        },
-        {
-            q: "Casting worker (12 yrs). Heavy metals/CO exposure. Abdominal pain, constipation. Urine: Aminolevulinic acid. Intoxication by?",
-            o: ["Carbon monoxide", "Zinc", "Nitric oxide", "Lead", "Tin"],
-            a: 3
-        },
-        {
-            q: "Newborn 32 wks, 1700g. Resp distress. Previous child died of RDS. X-ray: reticulonodular pattern. Diagnosis?",
-            o: ["Pulmonary atelectasis", "Diaphragmatic hernia", "Edematous hemorrhagic syndrome", "Intrauterine pneumonia", "Hyaline membrane syndrome"],
-            a: 4
-        },
-        {
-            q: "2-year-old, frequent resp diseases, malabsorption. Mucoviscidosis suspected. Confirm with?",
-            o: ["Immunogram", "Sweat chloride test", "Chest X-ray", "Bronchoscopy", "Karyotyping"],
-            a: 1
-        },
-        {
-            q: "Gynecology unit: 6500 women, 102000 bed-days total. What indicator?",
-            o: ["Average length of stay", "Planned bed occupancy", "Bed turnover", "Average bed occupancy", "Number of beds"],
-            a: 0
-        },
-        {
-            q: "Cadmium in river water 8-10x limit. Population disease?",
-            o: ["Minamata", "Itai-Itai", "Yusho", "Kashin-Beck", "Prasad"],
-            a: 1
-        },
-        {
-            q: "Normative document assisting practitioner/patient decisions for specific diseases?",
-            o: ["Medical care certificate", "Clinical practice guidelines", "Standard of medical care", "Accreditation", "Conformity certificate"],
-            a: 1
-        },
-        {
-            q: "Baby fed milk formula (well water). Cyanosis, nausea, vomiting. Cardiopulmonary failure. Diagnosis?",
-            o: ["Staphylococcal", "Nitrate-nitrite intoxication", "Foodborne toxicoinfection", "Pesticides", "Heavy metals"],
-            a: 1
-        },
-        {
-            q: "Newborn: round red formation suprapubic. Urine pulses from two orifices. Anomaly?",
-            o: ["Urachal cyst", "Bladder exstrophy", "Vesico-umbilical fistula", "Bladder agenesis", "Bladder diverticulum"],
-            a: 1
-        },
-        {
-            q: "32-year-old, obesity (abdomen/shoulders). Pale pink skin, male hair pattern. Sugar 4.9. Diagnosis?",
-            o: ["Secondary hypo-ovarian obesity", "Secondary neuroendocrine obesity", "Primary alimentary (gynoid)", "Secondary hypothalamic obesity", "Primary alimentary (android)"],
-            a: 4
-        },
-        {
-            q: "Pregnant 28yo. History: cervical rupture, 2 miscarriages (12/14 wks). Cervix scarred, canal gaping. Diagnosis?",
-            o: ["Threatened abortion", "Isthmico-cervical insufficiency", "Incipient abortion", "Cervical pregnancy", "Cervical hysteromyoma"],
-            a: 1
-        },
-        {
-            q: "Water quality: Turbidity 1.5, Odor 3 pts, Taste 2 pts (metallic), Color light yellow. Violation?",
-            o: ["Temperature", "Chromaticity", "Taste", "Turbidity", "Odor"],
-            a: 4
-        },
-        {
-            q: "Dead body exam: Gray-yellow triangular spots in eye corners. Phenomenon?",
-            o: ["Idiomuscular tumor", "Kayser-Fleischer ring", "Larcher spots", "Louis sign", "Beloglazov sign"],
-            a: 2
-        },
-        {
-            q: "Lumbar puncture in newborn (birth injury). Bloody CSF. Hemorrhage type?",
-            o: ["Supratentorial", "Subtentorial", "Epidural", "Subarachnoid", "Cephalohematoma"],
-            a: 3
-        },
-        {
-            q: "13-year-old girl, profuse bleeding 10 days. Irregular cycle. No pathology on exam. Diagnosis?",
-            o: ["Werlhof's disease", "Endometrial polyp", "Juvenile uterine bleeding", "External genital injury", "Adenomyosis"],
-            a: 2
-        },
-        {
-            q: "24-year-old woman, post-op hypothyroidism. Palpitations, irritability. On Levothyroxine 150mcg. Tactics?",
-            o: ["Beta-blockers", "Reduce dose", "Sulfonylurea", "Increase dose", "Add Mercazolil"],
-            a: 1
-        },
-        {
-            q: "18-year-old woman, lower abdominal pain, purulent discharge. Acute adnexitis. Bacteria: diplococci intra/extracellular. Agent?",
-            o: ["Colibacillus", "Trichomonad", "Gonococcus", "Chlamydia", "Staphylococcus"],
-            a: 2
-        },
-        {
-            q: "Grounds for forensic medical examination?",
-            o: ["Family doctor referral", "Investigative/Court resolution", "Head doctor referral", "Investigative referral (duplicate)", "Relative wishes"],
-            a: 1
-        },
-        {
-            q: "Patient with disturbed gait, forced laughter, mask-like face. Chemical exposure history. Factor?",
-            o: ["Manganese", "Cadmium", "Lead", "Benzene", "Mercury"],
-            a: 0
-        },
-        {
-            q: "Newborn day 3. Edema/hematoma left supraclavicular. Arm pressed to torso. Diagnosis?",
-            o: ["Displaced clavicle fracture", "Osteomyelitis", "Erb's palsy", "Phlegmon", "Non-displaced clavicle fracture"],
-            a: 0
-        },
-        {
-            q: "Man, sharp right chest pain, dyspnea. Acrocyanosis. Subcutaneous emphysema. Bandbox resonance right. Diagnosis?",
-            o: ["Pneumonia", "Myocardial infarction", "Lung infarction", "Spontaneous pneumothorax", "Exudative pleurisy"],
-            a: 3
-        },
-        {
-            q: "38-year-old woman, dry peeling skin. Papular rash extensor knees/elbows. Wax-colored nodules hair follicles. Deficiency?",
-            o: ["Thiamine", "Retinol", "Riboflavin", "Pyridoxine", "Ascorbic acid"],
-            a: 1
-        },
-        {
-            q: "56-year-old woman, biliary cirrhosis. Itching, nausea. Bilirubin 142. Treatment?",
-            o: ["Ursodeoxycholic acid", "Livolin forte", "Sirepar", "Essentiale forte", "Allochol"],
-            a: 0
-        },
-        {
-            q: "27-year-old woman, foul discharge, fever. Abortion 1 week ago. Uterus painful/enlarged. Diagnosis?",
-            o: ["Acute respiratory disease", "Enterocolitis", "Appendicitis", "Postabortal endometritis", "Salpingoophoritis"],
-            a: 3
         }
     ];
 
-    // --- APP LOGIC ---
+    // --- APP STATE ---
     let activeQuestions = [];
     let userAnswers = {};
-    let currentQuestionIndex = 0;
+    let currentIndex = 0;
+    let apiKey = "";
 
+    // --- DOM REFERENCES ---
     const setupView = document.getElementById('setup-view');
     const quizView = document.getElementById('quiz-view');
-    const totalAvailableSpan = document.getElementById('total-available');
-    const quizLengthSelect = document.getElementById('quiz-length');
+    const totalCountEl = document.getElementById('total-count');
     const resumeBtn = document.getElementById('resume-btn');
+    const quizLengthSelect = document.getElementById('quiz-length');
+    const apiKeyInput = document.getElementById('api-key');
+    const aiBox = document.getElementById('ai-response-box');
+    const aiContent = document.getElementById('ai-content');
 
+    // --- INIT ---
     function init() {
-        // Display total questions available in DB
-        totalAvailableSpan.textContent = fullQuestionPool.length;
-        
-        // Update max options in select based on actual DB size
-        const count = fullQuestionPool.length;
-        // Dynamically hide options that are larger than DB
+        totalCountEl.textContent = db.length;
         Array.from(quizLengthSelect.options).forEach(opt => {
-            if (opt.value !== 'all' && parseInt(opt.value) > count) {
-                opt.disabled = true;
-            }
+            if (opt.value !== 'all' && parseInt(opt.value) > db.length) opt.disabled = true;
         });
 
-        checkResume();
+        // Load API Key
+        const savedKey = localStorage.getItem('geminiApiKey');
+        if(savedKey) apiKeyInput.value = savedKey;
+
+        // Load Session
+        if(localStorage.getItem('medQuizSession')) resumeBtn.classList.remove('hidden');
     }
 
-    function checkResume() {
-        const saved = localStorage.getItem('medQuizSession');
-        if (saved) {
-            resumeBtn.classList.remove('hidden');
-        } else {
-            resumeBtn.classList.add('hidden');
-        }
-    }
-
+    // --- CORE QUIZ FUNCTIONS ---
     function startNewQuiz() {
-        const val = quizLengthSelect.value;
-        let count = 0;
-        if (val === 'all') count = fullQuestionPool.length;
-        else count = parseInt(val);
+        // Save API Key
+        apiKey = apiKeyInput.value.trim();
+        if(apiKey) localStorage.setItem('geminiApiKey', apiKey);
 
-        if (confirm("Start new quiz? Unsaved progress will be lost.")) {
-            // Shuffle
-            const shuffled = [...fullQuestionPool].sort(() => 0.5 - Math.random());
-            activeQuestions = shuffled.slice(0, count);
-            
-            userAnswers = {};
-            currentQuestionIndex = 0;
-            saveSession();
-            showQuiz();
-        }
+        const val = quizLengthSelect.value;
+        let count = (val === 'all') ? db.length : parseInt(val);
+        
+        activeQuestions = [...db].sort(() => 0.5 - Math.random()).slice(0, count);
+        userAnswers = {};
+        currentIndex = 0;
+        
+        saveSession();
+        showQuiz();
     }
 
     function resumeQuiz() {
-        const saved = localStorage.getItem('medQuizSession');
-        if (saved) {
-            const data = JSON.parse(saved);
-            activeQuestions = data.q;
-            userAnswers = data.a;
-            currentQuestionIndex = data.i;
+        // Load Key
+        apiKey = localStorage.getItem('geminiApiKey') || "";
+        
+        const data = JSON.parse(localStorage.getItem('medQuizSession'));
+        if(data) {
+            activeQuestions = data.questions;
+            userAnswers = data.answers;
+            currentIndex = data.currentIndex;
             showQuiz();
-        }
-    }
-
-    function exitToSetup() {
-        if (confirm("Return to main menu?")) {
-            quizView.classList.add('hidden');
-            setupView.classList.remove('hidden');
-            checkResume();
         }
     }
 
@@ -812,69 +414,129 @@
         renderQuestion();
     }
 
+    function exitToMenu() {
+        if(confirm("Exit?")) {
+            quizView.classList.add('hidden');
+            setupView.classList.remove('hidden');
+            init();
+        }
+    }
+
     function saveSession() {
         localStorage.setItem('medQuizSession', JSON.stringify({
-            q: activeQuestions,
-            a: userAnswers,
-            i: currentQuestionIndex
+            questions: activeQuestions, answers: userAnswers, currentIndex: currentIndex
         }));
     }
 
+    function nav(dir) {
+        const next = currentIndex + dir;
+        if(next >= 0 && next < activeQuestions.length) {
+            currentIndex = next;
+            // Hide AI box when changing questions
+            aiBox.style.display = 'none';
+            saveSession();
+            renderQuestion();
+        }
+    }
+
+    function handleOptionClick(idx) {
+        userAnswers[currentIndex] = idx;
+        saveSession();
+        renderQuestion();
+    }
+
     function renderQuestion() {
-        const qData = activeQuestions[currentQuestionIndex];
-        const userAnswer = userAnswers[currentQuestionIndex];
+        const q = activeQuestions[currentIndex];
+        const userAnswer = userAnswers[currentIndex];
         const isAnswered = userAnswer !== undefined;
 
-        document.getElementById('question-text').textContent = `${currentQuestionIndex + 1}. ${qData.q}`;
-        document.getElementById('question-number').textContent = `${currentQuestionIndex + 1} / ${activeQuestions.length}`;
+        document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${activeQuestions.length}`;
+        document.getElementById('progress-fill').style.width = `${((currentIndex + 1) / activeQuestions.length) * 100}%`;
+
+        // Score
+        let correct = 0, answered = 0;
+        activeQuestions.forEach((q, i) => {
+            if(userAnswers[i] !== undefined) {
+                answered++;
+                if(userAnswers[i] === q.a) correct++;
+            }
+        });
+        document.getElementById('score-text').textContent = answered === 0 ? "0%" : `${Math.round((correct/answered)*100)}%`;
+
+        document.getElementById('q-text').textContent = q.q;
 
         const container = document.getElementById('options-container');
         container.innerHTML = '';
 
-        qData.o.forEach((opt, idx) => {
+        q.o.forEach((optText, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
-            btn.textContent = opt;
+            btn.textContent = optText;
 
-            if (isAnswered) {
-                if (idx === qData.a) btn.classList.add('correct');
-                if (idx === userAnswer) {
-                    if (idx !== qData.a) btn.classList.add('wrong');
+            if(isAnswered) {
+                if(idx === q.a) btn.classList.add('correct');
+                if(idx === userAnswer) {
+                    if(idx !== q.a) btn.classList.add('wrong');
                     else btn.classList.add('selected');
                 }
             }
-
-            btn.onclick = () => {
-                userAnswers[currentQuestionIndex] = idx;
-                saveSession();
-                renderQuestion();
-            };
-
+            btn.onclick = () => handleOptionClick(idx);
             container.appendChild(btn);
         });
 
-        // Navigation state
-        document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
-        document.getElementById('next-btn').disabled = (currentQuestionIndex === activeQuestions.length - 1);
-
-        // Progress Bar
-        const pct = ((currentQuestionIndex + 1) / activeQuestions.length) * 100;
-        document.getElementById('progress-bar').style.width = `${pct}%`;
-
-        // Score
-        let correct = 0;
-        Object.keys(userAnswers).forEach(k => {
-            if (userAnswers[k] === activeQuestions[k].a) correct++;
-        });
-        document.getElementById('score-display').textContent = `Score: ${correct}`;
+        document.getElementById('prev-btn').disabled = (currentIndex === 0);
+        document.getElementById('next-btn').disabled = (currentIndex === activeQuestions.length - 1);
+        
+        // Hide AI box on render
+        if(aiBox.style.display !== 'block') aiBox.style.display = 'none';
     }
 
-    function changeQuestion(delta) {
-        const next = currentQuestionIndex + delta;
-        if (next >= 0 && next < activeQuestions.length) {
-            currentQuestionIndex = next;
-            saveSession();
-            renderQuestion();
+    // --- AI LOGIC ---
+    async function askAI() {
+        if(!apiKey) {
+            alert("Please enter a Google Gemini API Key in the setup screen to use this feature.");
+            return;
+        }
+
+        const qData = activeQuestions[currentIndex];
+        const correctText = qData.o[qData.a];
+        
+        // Show box with loading
+        aiBox.style.display = 'block';
+        aiContent.innerHTML = "Thinking... Analyzing medical context...";
+        
+        const prompt = `
+            You are an expert medical board exam tutor.
+            Question: "${qData.q}"
+            Options: ${JSON.stringify(qData.o)}
+            Correct Answer: "${correctText}"
+            
+            Task:
+            1. Explain concisely why the correct answer is right.
+            2. Briefly explain why the other options are wrong (differential diagnosis).
+            3. Keep it simple and educational. Format with bullet points.
+        `;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+
+            const data = await response.json();
+            
+            if(data.error) {
+                aiContent.innerHTML = `<span style="color:red">Error: ${data.error.message}</span>`;
+            } else {
+                // Basic Markdown formatting cleanup
+                let text = data.candidates[0].content.parts[0].text;
+                text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+                text = text.replace(/\n/g, '<br>'); // Newlines
+                aiContent.innerHTML = text;
+            }
+        } catch (e) {
+            aiContent.innerHTML = `<span style="color:red">Connection Error. Please check your internet or API key.</span>`;
         }
     }
 
