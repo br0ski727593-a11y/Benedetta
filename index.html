@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Medical Board Tutor (Pro)</title>
     <style>
         :root { --primary: #2563eb; --background: #f8fafc; --surface: #ffffff; --text: #0f172a; --ai-color: #7c3aed; }
@@ -33,7 +33,7 @@
 <div class="app-container">
     <div id="setup-view" style="text-align:center; padding: 2rem 0;">
         <h1 style="color: var(--primary); margin-bottom: 10px;">Medical Board Tutor</h1>
-        <p style="color: #64748b;">AI Model: <strong style="color: #7c3aed;">Gemini 1.5 Pro</strong></p>
+        <p style="color: #64748b;">AI Model: <strong style="color: #7c3aed;">Gemini 1.5 Pro</strong> (with Auto-Fallback)</p>
         <p style="color: #64748b;">Database: <strong>250+ Questions</strong></p>
         <button class="primary-btn" onclick="startNewQuiz()">Start Session</button>
     </div>
@@ -45,7 +45,7 @@
         </div>
         <p id="q-text" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;"></p>
         <div id="options-container"></div>
-        <button class="ai-btn" onclick="askAI()"><span>✨ Explain with Pro AI</span></button>
+        <button class="ai-btn" onclick="askAI()"><span>✨ Explain This</span></button>
         <div id="ai-response-box"></div>
         <div class="nav-container">
             <button class="nav-btn" id="prev-btn" onclick="nav(-1)">Previous</button>
@@ -58,14 +58,12 @@
 </div>
 
 <script>
-    // --- UPDATED KEY & MODEL CONFIG ---
+    // --- CONFIGURATION ---
     const API_KEY = "AIzaSyDOXuMkT0qUpTyAS1OLZbsV-HZdALzNauk"; 
-    // We are now using the PRO model
-    const MODEL_NAME = "gemini-1.5-pro";
-
+    
     // --- 250 QUESTION DATABASE ---
     const db = [
-        // BATCH 1: GENERAL & KROK
+        // BATCH 1
         { q: "10-month-old boy, poor weight gain, persistent cough, thick sputum. Sweat chloride > 80 mEq/L. Diagnosis?", o: ["Cystic fibrosis", "Asthma", "Lung abnormality", "Foreign body", "Bronchitis"], a: 0 },
         { q: "42yo man, duodenal ulcer 20 yrs, vomiting food from day before, 'sloshing sound'. Complication?", o: ["Ulcer penetration", "Chronic pancreatitis", "Pyloric stenosis", "Perforation", "Cancer"], a: 2 },
         { q: "Pregnant woman, severe condition, BP 160/130, seizures, foam on lips. Diagnosis?", o: ["HTN crisis", "Diabetic coma", "Chorea", "Eclampsia", "Epilepsy"], a: 3 },
@@ -96,8 +94,7 @@
         { q: "Newborn 3980g. Right hand adducted, rotated, no movement shoulder/elbow. Diagnosis?", o: ["Klumpke", "Total plexus", "Duchenne-Erb", "Dislocation", "Fracture"], a: 2 },
         { q: "10yo boy, seasonal stuffy nose. Pale swollen mucosa. Father has asthma. Diagnosis?", o: ["Rhinitis", "Sinusitis", "Adenoiditis", "Allergic rhinitis", "Respiratory disease"], a: 3 },
         { q: "40yo woman, epilepsy. Seizures every 2-3 mins, no consciousness between. Diagnosis?", o: ["Grand mal", "Hysterical", "Status epilepticus", "Absence", "Psychosis"], a: 2 },
-
-        // BATCH 2: HIGH YIELD INTERNAL MED & SURGERY
+        // BATCH 2
         { q: "35yo woman, fatigue, weight gain, cold intolerance. Goiter, delayed reflexes. High TSH. Diagnosis?", o: ["Graves", "Hashimoto's", "Subacute thyroiditis", "Adenoma", "Iodine deficiency"], a: 1 },
         { q: "60yo male, crushing chest pain, diaphoresis. ST elevation II, III, aVF. Artery?", o: ["LAD", "Circumflex", "RCA", "Left Main", "Posterior Descending"], a: 2 },
         { q: "4yo child, fever 5 days, strawberry tongue, desquamation. Complication?", o: ["Renal failure", "Coronary aneurysms", "Meningitis", "Liver failure", "PE"], a: 1 },
@@ -148,8 +145,7 @@
         { q: "Hematemesis after retching. Diagnosis?", o: ["Varices", "Mallory-Weiss", "Boerhaave", "Ulcer", "Gastritis"], a: 1 },
         { q: "Trauma, trachea deviated left, no breath sounds right. Diagnosis?", o: ["Left Tension", "Right Tension Pneumo", "Hemothorax", "Tamponade", "Flail"], a: 1 },
         { q: "Painless jaundice, palpable gallbladder. Diagnosis?", o: ["Stones", "Pancreatic Cancer", "Hepatitis", "Cholangitis", "Liver Ca"], a: 1 },
-        
-        // BATCH 3: ANATOMY & BASIC SCIENCE
+        // BATCH 3
         { q: "Winged scapula. Nerve injury?", o: ["Long Thoracic", "Axillary", "Radial", "Musculocutaneous", "Suprascapular"], a: 0 },
         { q: "Cannot abduct arm above 90 degrees. Nerve?", o: ["Spinal Accessory", "Axillary", "Long Thoracic", "Suprascapular", "Radial"], a: 0 },
         { q: "Wrist drop. Nerve?", o: ["Radial", "Ulnar", "Median", "Axillary", "Musculocutaneous"], a: 0 },
@@ -250,8 +246,7 @@
         { q: "Koilocytes. Diagnosis?", o: ["HPV", "HSV", "CMV", "EBV", "HIV"], a: 0 },
         { q: "Blueberry muffin baby. Diagnosis?", o: ["Rubella / CMV", "Measles", "Varicella", "Parvo", "Syphilis"], a: 0 },
         { q: "Onion skinning of vessels. Diagnosis?", o: ["Malignant Hypertension", "Atherosclerosis", "Diabetes", "Vasculitis", "Amyloid"], a: 0 },
-        
-        // BATCH 4: INFECTIOUS DISEASE, PHARMACOLOGY
+        // BATCH 4
         { q: "Red Man Syndrome is associated with?", o: ["Vancomycin", "Penicillin", "Gentamicin", "Linezolid", "Doxycycline"], a: 0 },
         { q: "Gray Baby Syndrome is associated with?", o: ["Chloramphenicol", "Tetracycline", "Aspirin", "Sulfonamides", "Fluoroquinolones"], a: 0 },
         { q: "Discolored teeth in children. Drug?", o: ["Tetracycline", "Amoxicillin", "Azithromycin", "Cipro", "Doxycycline"], a: 0 },
@@ -363,21 +358,44 @@
         if(idx + d >= 0 && idx + d < activeQ.length) { idx += d; render(); }
     }
 
+    // --- AUTO-FALLBACK AI FUNCTION ---
     async function askAI() {
         const q = activeQ[idx];
         const box = document.getElementById('ai-response-box');
         box.style.display = 'block';
-        box.innerHTML = "<span class='dots'><strong>🤖 AI is analyzing</strong></span>";
-        const prompt = `Medical Board Tutor. Q: "${q.q}" Correct: "${q.o[q.a]}" Options: ${JSON.stringify(q.o)} Task: 1. Explain why correct. 2. Explain why others wrong. Keep it concise.`;
+        
+        // Step 1: Try PRO model
+        box.innerHTML = "<span class='dots'><strong>🤖 AI Pro is thinking...</strong></span>";
+        const prompt = `Role: Medical Tutor. Q: "${q.q}" Correct: "${q.o[q.a]}" Options: ${JSON.stringify(q.o)} Task: 1. Explain why correct. 2. Explain why others wrong. Keep it concise.`;
+        
         try {
-            // Updated Endpoint for PRO Model
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
-            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+            const urlPro = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${API_KEY}`;
+            const response = await fetch(urlPro, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
             const data = await response.json();
-            if(data.error) { box.innerHTML = `<span style="color:red">Error: ${data.error.message}</span>`; } else {
-                box.innerHTML = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            
+            if(data.error) throw new Error(data.error.message); // Trigger fallback
+            
+            box.innerHTML = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+
+        } catch (e) {
+            // Step 2: Fallback to FLASH if Pro fails
+            console.log("Pro failed, switching to Flash:", e.message);
+            box.innerHTML = "<span class='dots' style='color:orange'><strong>⚠️ Pro busy. Switching to Flash...</strong></span>";
+            
+            try {
+                const urlFlash = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+                const response2 = await fetch(urlFlash, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                const data2 = await response2.json();
+                
+                if(data2.error) {
+                    box.innerHTML = `<span style="color:red">AI Error: ${data2.error.message}</span>`;
+                } else {
+                    box.innerHTML = data2.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                }
+            } catch (e2) {
+                box.innerHTML = `<span style="color:red">Connection Error. Please check internet.</span>`;
             }
-        } catch (e) { box.innerHTML = `<span style="color:red">Connection Error.</span>`; }
+        }
     }
 </script>
 </body>
