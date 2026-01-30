@@ -12,8 +12,10 @@
         button { cursor: pointer; border: none; font-weight: bold; transition: opacity 0.2s; }
         button:hover { opacity: 0.9; }
         
+        /* Main Start Button */
         .primary-btn { background: var(--primary); color: white; width: 100%; font-size: 1.2rem; padding: 15px; border-radius: 12px; margin-top: 10px; }
         
+        /* AI Button */
         .ai-btn { 
             background: linear-gradient(135deg, #7c3aed, #6d28d9); 
             color: white; padding: 12px 24px; border-radius: 8px; 
@@ -21,13 +23,16 @@
             box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);
         }
         
+        /* Quiz Options */
         .option-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #e2e8f0; background: white; text-align: left; border-radius: 10px; font-size: 1rem; }
         .option-btn:hover { border-color: var(--primary); background: #eff6ff; }
         .option-btn.correct { background: #dcfce7; border-color: #16a34a; color: #14532d; }
         .option-btn.wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
         
+        /* AI Box */
         #ai-response-box { background: #f3e8ff; padding: 20px; border-radius: 12px; margin-top: 15px; display: none; border: 1px solid #d8b4fe; color: #4c1d95; line-height: 1.6; }
         
+        /* Navigation */
         .nav-btn { background: white; border: 2px solid #e2e8f0; padding: 10px 20px; border-radius: 8px; color: #64748b; }
         .header { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
     </style>
@@ -37,7 +42,8 @@
 <div class="app-container">
     <div id="setup-view" style="text-align:center;">
         <h1 style="color: var(--primary);">Medical Board Tutor</h1>
-        <p>AI Tutor is <strong>Active</strong> & Ready.</p>
+        <p>Your AI Key is loaded.</p>
+        <p>Model: <strong>Gemini 1.5 Flash</strong> (Ready)</p>
         <button class="primary-btn" onclick="startNewQuiz()">Start Session</button>
     </div>
 
@@ -50,7 +56,7 @@
         <p id="q-text" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;"></p>
         <div id="options-container"></div>
         
-        <button class="ai-btn" onclick="askAI()">✨ Click for AI Explanation</button>
+        <button class="ai-btn" onclick="askAI()">✨ Explain This Question</button>
         <div id="ai-response-box"></div>
 
         <div style="margin-top: 30px; display: flex; justify-content: space-between;">
@@ -61,10 +67,10 @@
 </div>
 
 <script>
-    // --- API KEY PRE-LOADED ---
+    // --- YOUR API KEY (Already Inserted) ---
     const API_KEY = "AIzaSyAwvv2MjKEYA8VG8UEvVrv3zi7AiNARaxU"; 
 
-    // --- DATABASE ---
+    // --- QUESTION DATABASE ---
     const db = [
         { q: "A 10-month-old boy is poorly gaining weight. His mother complains about his constant persistent cough. Sputum is thick and viscous. The boy had pneumonia three times. His sweat chloride levels are over 80 mEq/L. Diagnosis?", o: ["Mucoviscidosis (cystic fibrosis)", "Bronchial asthma", "Congenital lung abnormality", "Foreign body", "Chronic bronchitis"], a: 0 },
         { q: "A 42-year-old man, duodenal ulcer 20 yrs, heaviness in stomach, eructation with smell of decay, vomiting food from day before, 'sloshing sound'. Complication?", o: ["Ulcer penetration", "Chronic pancreatitis", "Ulcerative stenosis of the pylorus", "Covered perforation", "Stomach cancer"], a: 2 },
@@ -83,7 +89,7 @@
     let idx = 0;
 
     function startNewQuiz() {
-        activeQ = db; // In a full version, shuffle here
+        activeQ = db; 
         document.getElementById('setup-view').classList.add('hidden');
         document.getElementById('quiz-view').classList.remove('hidden');
         render();
@@ -94,7 +100,6 @@
         document.getElementById('progress-text').innerText = `Question ${idx + 1}/${activeQ.length}`;
         document.getElementById('q-text').innerText = q.q;
         
-        // Update Score
         let correctCount = 0;
         let answeredCount = 0;
         Object.keys(answers).forEach(k => {
@@ -119,7 +124,6 @@
             div.appendChild(btn);
         });
         
-        // Hide AI box when changing questions
         document.getElementById('ai-response-box').style.display = 'none';
     }
 
@@ -127,22 +131,27 @@
         if(idx + d >= 0 && idx + d < activeQ.length) { idx += d; render(); }
     }
 
+    // --- AI FUNCTION ---
     async function askAI() {
         const q = activeQ[idx];
         const box = document.getElementById('ai-response-box');
         box.style.display = 'block';
-        box.innerHTML = "<strong>🤖 AI is thinking...</strong>";
+        box.innerHTML = "<strong>🤖 AI is analyzing...</strong>";
 
+        // Prompt for the AI
         const prompt = `
-        Role: Medical Tutor.
+        You are a medical tutor. 
         Question: "${q.q}"
         Correct Answer: "${q.o[q.a]}"
-        Task: Explain concisely why this is the correct diagnosis. Explain why the others are wrong.
-        Format: Use simple paragraphs or bullet points.
+        
+        Task:
+        1. Explain why this is the correct diagnosis.
+        2. Briefly explain why the other options are wrong.
+        Keep it clear and helpful for a student.
         `;
         
         try {
-            // FIXED MODEL NAME HERE: gemini-1.5-flash
+            // Corrected Model URL
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
             
             const response = await fetch(url, {
