@@ -3,26 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Medical Board Tutor (Pro)</title>
+    <title>Medical Board Tutor (Ultimate)</title>
     <style>
-        :root { --primary: #2563eb; --background: #f8fafc; --surface: #ffffff; --text: #0f172a; --ai-color: #7c3aed; }
+        :root { --primary: #2563eb; --background: #f8fafc; --surface: #ffffff; --text: #0f172a; --ai-color: #7c3aed; --perplex: #0ea5e9; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--background); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
         .app-container { background: var(--surface); width: 100%; max-width: 800px; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
         .hidden { display: none; }
         button { cursor: pointer; border: none; font-weight: 700; transition: transform 0.1s, opacity 0.2s; }
         button:active { transform: scale(0.98); }
+        
+        /* Buttons */
         .primary-btn { background: var(--primary); color: white; width: 100%; font-size: 1.2rem; padding: 16px; border-radius: 12px; margin-top: 20px; }
         .ai-btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; padding: 12px 24px; border-radius: 8px; margin: 25px auto; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-size: 1rem; box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2); }
+        
+        /* Perplexity Button */
+        .perplex-btn { background: white; border: 2px solid var(--perplex); color: var(--perplex); padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; flex-grow: 1; margin: 0 10px; }
+        .perplex-btn:hover { background: #e0f2fe; }
+
+        /* Options */
         .option-btn { display: block; width: 100%; padding: 16px; margin: 12px 0; border: 2px solid #e2e8f0; background: white; text-align: left; border-radius: 12px; font-size: 1rem; color: var(--text); }
         .option-btn:hover { border-color: var(--primary); background: #eff6ff; }
         .option-btn.correct { background: #dcfce7; border-color: #16a34a; color: #14532d; }
         .option-btn.wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
         .option-btn.selected { border-color: var(--primary); background: #eff6ff; font-weight: 600; }
+        
+        /* AI Box */
         #ai-response-box { background: #f5f3ff; padding: 20px; border-radius: 12px; margin-top: 15px; display: none; border: 1px solid #d8b4fe; color: #4c1d95; font-size: 0.95rem; }
-        .nav-container { display: flex; justify-content: space-between; margin-top: 30px; }
-        .nav-btn { background: white; border: 2px solid #e2e8f0; padding: 10px 24px; border-radius: 8px; color: #64748b; }
+        
+        /* Navigation */
+        .nav-container { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+        .nav-btn { background: white; border: 2px solid #e2e8f0; padding: 10px 20px; border-radius: 8px; color: #64748b; }
         .nav-btn:hover { border-color: #94a3b8; color: var(--text); }
         .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
         .header { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
         .dots::after { content: '.'; animation: dots 1.5s steps(5, end) infinite; }
         @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } 80%, 100% { content: ''; } }
@@ -33,7 +46,7 @@
 <div class="app-container">
     <div id="setup-view" style="text-align:center; padding: 2rem 0;">
         <h1 style="color: var(--primary); margin-bottom: 10px;">Medical Board Tutor</h1>
-        <p style="color: #64748b;">AI Model: <strong style="color: #7c3aed;">Gemini 1.5 Pro</strong> (with Auto-Fallback)</p>
+        <p style="color: #64748b;">AI Model: <strong style="color: #7c3aed;">Gemini 1.5 Pro</strong></p>
         <p style="color: #64748b;">Database: <strong>250+ Questions</strong></p>
         <button class="primary-btn" onclick="startNewQuiz()">Start Session</button>
     </div>
@@ -43,31 +56,36 @@
             <span id="progress-text" style="font-weight:700; color:#64748b; font-size: 0.9rem;">Q 1</span>
             <span id="score-text" style="font-weight:700; color:var(--primary); font-size: 0.9rem;">Score: 0%</span>
         </div>
+        
         <p id="q-text" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;"></p>
         <div id="options-container"></div>
-        <button class="ai-btn" onclick="askAI()"><span>✨ Explain This</span></button>
+        
+        <button class="ai-btn" onclick="askAI()"><span>✨ Explain (Pro AI)</span></button>
         <div id="ai-response-box"></div>
-                <div class="nav-container" style="display: flex; gap: 10px; justify-content: space-between;">
-            
-            <button class="nav-btn" id="prev-btn" onclick="nav(-1)">Previous</button>
 
-            <button class="nav-btn" onclick="smartSearch()" style="color: #0ea5e9; border-color: #0ea5e9; flex-grow: 2;">
+        <div class="nav-container">
+            <button class="nav-btn" id="prev-btn" onclick="nav(-1)">Prev</button>
+            
+            <button class="perplex-btn" onclick="smartSearch()">
                 🚀 Ask Perplexity
             </button>
 
             <button class="nav-btn" id="next-btn" onclick="nav(1)">Next</button>
         </div>
-
+        
+        <div style="text-align: center; margin-top: 20px;">
+             <button onclick="exitToMenu()" style="background: none; text-decoration: underline; color: #94a3b8; font-weight: normal; font-size: 0.9rem;">Exit</button>
+        </div>
     </div>
 </div>
 
 <script>
     // --- CONFIGURATION ---
     const API_KEY = "AIzaSyDOXuMkT0qUpTyAS1OLZbsV-HZdALzNauk"; 
-    
+
     // --- 250 QUESTION DATABASE ---
     const db = [
-        // BATCH 1
+        // BATCH 1: GENERAL
         { q: "10-month-old boy, poor weight gain, persistent cough, thick sputum. Sweat chloride > 80 mEq/L. Diagnosis?", o: ["Cystic fibrosis", "Asthma", "Lung abnormality", "Foreign body", "Bronchitis"], a: 0 },
         { q: "42yo man, duodenal ulcer 20 yrs, vomiting food from day before, 'sloshing sound'. Complication?", o: ["Ulcer penetration", "Chronic pancreatitis", "Pyloric stenosis", "Perforation", "Cancer"], a: 2 },
         { q: "Pregnant woman, severe condition, BP 160/130, seizures, foam on lips. Diagnosis?", o: ["HTN crisis", "Diabetic coma", "Chorea", "Eclampsia", "Epilepsy"], a: 3 },
@@ -98,7 +116,8 @@
         { q: "Newborn 3980g. Right hand adducted, rotated, no movement shoulder/elbow. Diagnosis?", o: ["Klumpke", "Total plexus", "Duchenne-Erb", "Dislocation", "Fracture"], a: 2 },
         { q: "10yo boy, seasonal stuffy nose. Pale swollen mucosa. Father has asthma. Diagnosis?", o: ["Rhinitis", "Sinusitis", "Adenoiditis", "Allergic rhinitis", "Respiratory disease"], a: 3 },
         { q: "40yo woman, epilepsy. Seizures every 2-3 mins, no consciousness between. Diagnosis?", o: ["Grand mal", "Hysterical", "Status epilepticus", "Absence", "Psychosis"], a: 2 },
-        // BATCH 2
+
+        // BATCH 2: HIGH YIELD INTERNAL MED & SURGERY
         { q: "35yo woman, fatigue, weight gain, cold intolerance. Goiter, delayed reflexes. High TSH. Diagnosis?", o: ["Graves", "Hashimoto's", "Subacute thyroiditis", "Adenoma", "Iodine deficiency"], a: 1 },
         { q: "60yo male, crushing chest pain, diaphoresis. ST elevation II, III, aVF. Artery?", o: ["LAD", "Circumflex", "RCA", "Left Main", "Posterior Descending"], a: 2 },
         { q: "4yo child, fever 5 days, strawberry tongue, desquamation. Complication?", o: ["Renal failure", "Coronary aneurysms", "Meningitis", "Liver failure", "PE"], a: 1 },
@@ -149,7 +168,8 @@
         { q: "Hematemesis after retching. Diagnosis?", o: ["Varices", "Mallory-Weiss", "Boerhaave", "Ulcer", "Gastritis"], a: 1 },
         { q: "Trauma, trachea deviated left, no breath sounds right. Diagnosis?", o: ["Left Tension", "Right Tension Pneumo", "Hemothorax", "Tamponade", "Flail"], a: 1 },
         { q: "Painless jaundice, palpable gallbladder. Diagnosis?", o: ["Stones", "Pancreatic Cancer", "Hepatitis", "Cholangitis", "Liver Ca"], a: 1 },
-        // BATCH 3
+        
+        // BATCH 3: ANATOMY & BASIC SCIENCE
         { q: "Winged scapula. Nerve injury?", o: ["Long Thoracic", "Axillary", "Radial", "Musculocutaneous", "Suprascapular"], a: 0 },
         { q: "Cannot abduct arm above 90 degrees. Nerve?", o: ["Spinal Accessory", "Axillary", "Long Thoracic", "Suprascapular", "Radial"], a: 0 },
         { q: "Wrist drop. Nerve?", o: ["Radial", "Ulnar", "Median", "Axillary", "Musculocutaneous"], a: 0 },
@@ -250,7 +270,7 @@
         { q: "Koilocytes. Diagnosis?", o: ["HPV", "HSV", "CMV", "EBV", "HIV"], a: 0 },
         { q: "Blueberry muffin baby. Diagnosis?", o: ["Rubella / CMV", "Measles", "Varicella", "Parvo", "Syphilis"], a: 0 },
         { q: "Onion skinning of vessels. Diagnosis?", o: ["Malignant Hypertension", "Atherosclerosis", "Diabetes", "Vasculitis", "Amyloid"], a: 0 },
-        // BATCH 4
+        // BATCH 4: INFECTIOUS DISEASE, PHARMACOLOGY
         { q: "Red Man Syndrome is associated with?", o: ["Vancomycin", "Penicillin", "Gentamicin", "Linezolid", "Doxycycline"], a: 0 },
         { q: "Gray Baby Syndrome is associated with?", o: ["Chloramphenicol", "Tetracycline", "Aspirin", "Sulfonamides", "Fluoroquinolones"], a: 0 },
         { q: "Discolored teeth in children. Drug?", o: ["Tetracycline", "Amoxicillin", "Azithromycin", "Cipro", "Doxycycline"], a: 0 },
@@ -362,14 +382,21 @@
         if(idx + d >= 0 && idx + d < activeQ.length) { idx += d; render(); }
     }
 
-    // --- AUTO-FALLBACK AI FUNCTION ---
+    // --- SMART SEARCH (PERPLEXITY) ---
+    function smartSearch() {
+        const currentQuestion = activeQ[idx].q;
+        const encodedQuery = encodeURIComponent(currentQuestion + " medical board explanation");
+        window.open(`https://www.perplexity.ai/search?q=${encodedQuery}`, '_blank');
+    }
+
+    // --- AI LOGIC (PRO + FALLBACK) ---
     async function askAI() {
         const q = activeQ[idx];
         const box = document.getElementById('ai-response-box');
         box.style.display = 'block';
         
-        // Step 1: Try PRO model
-        box.innerHTML = "<span class='dots'><strong>🤖 AI Pro is thinking...</strong></span>";
+        // Step 1: Try PRO
+        box.innerHTML = "<span class='dots'><strong>🤖 Pro AI is thinking...</strong></span>";
         const prompt = `Role: Medical Tutor. Q: "${q.q}" Correct: "${q.o[q.a]}" Options: ${JSON.stringify(q.o)} Task: 1. Explain why correct. 2. Explain why others wrong. Keep it concise.`;
         
         try {
@@ -382,7 +409,7 @@
             box.innerHTML = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
 
         } catch (e) {
-            // Step 2: Fallback to FLASH if Pro fails
+            // Step 2: Fallback to FLASH
             console.log("Pro failed, switching to Flash:", e.message);
             box.innerHTML = "<span class='dots' style='color:orange'><strong>⚠️ Pro busy. Switching to Flash...</strong></span>";
             
