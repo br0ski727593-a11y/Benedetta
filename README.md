@@ -42,8 +42,7 @@
 <div class="app-container">
     <div id="setup-view" style="text-align:center;">
         <h1 style="color: var(--primary);">Medical Board Tutor</h1>
-        <p>Your AI Key is loaded.</p>
-        <p>Model: <strong>Gemini 1.5 Flash</strong> (Ready)</p>
+        <p>AI Tutor Status: <strong style="color: #16a34a;">ONLINE</strong></p>
         <button class="primary-btn" onclick="startNewQuiz()">Start Session</button>
     </div>
 
@@ -67,7 +66,7 @@
 </div>
 
 <script>
-    // --- YOUR API KEY (Already Inserted) ---
+    // --- YOUR API KEY ---
     const API_KEY = "AIzaSyAwvv2MjKEYA8VG8UEvVrv3zi7AiNARaxU"; 
 
     // --- QUESTION DATABASE ---
@@ -138,7 +137,6 @@
         box.style.display = 'block';
         box.innerHTML = "<strong>🤖 AI is analyzing...</strong>";
 
-        // Prompt for the AI
         const prompt = `
         You are a medical tutor. 
         Question: "${q.q}"
@@ -147,11 +145,11 @@
         Task:
         1. Explain why this is the correct diagnosis.
         2. Briefly explain why the other options are wrong.
-        Keep it clear and helpful for a student.
+        Keep it clear and helpful.
         `;
         
         try {
-            // Corrected Model URL
+            // FIXED MODEL NAME: gemini-1.5-flash
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
             
             const response = await fetch(url, {
